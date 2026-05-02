@@ -1,5 +1,5 @@
 export type UserRole = "user" | "admin";
-export type UserPlan = "free" | "premium";
+export type UserPlan = "free" | "premium" | "pro" | "gold";
 export type UserStatus = "active" | "inactive";
 
 export interface Profile {
@@ -44,6 +44,7 @@ export interface Live {
   data: string;
   status: LiveStatus;
   is_premium: boolean;
+  plan_access?: string[];
   ganhos?: number | null;
   perdas?: number | null;
   caixa_final?: number | null;

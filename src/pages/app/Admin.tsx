@@ -166,6 +166,8 @@ function UsersTab() {
                       <SelectContent>
                         <SelectItem value="free">Free</SelectItem>
                         <SelectItem value="premium">Premium</SelectItem>
+                        <SelectItem value="pro">PRO</SelectItem>
+                        <SelectItem value="gold">GOLD</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -220,6 +222,8 @@ function UsersTab() {
                       <SelectContent>
                         <SelectItem value="free">Free</SelectItem>
                         <SelectItem value="premium">Premium</SelectItem>
+                        <SelectItem value="pro">PRO</SelectItem>
+                        <SelectItem value="gold">GOLD</SelectItem>
                       </SelectContent>
                     </Select>
                   </td>
@@ -251,6 +255,24 @@ function UsersTab() {
 }
 
 // ----------- Lives -----------
+const PLAN_OPTIONS = [
+  { value: "free", label: "Free", color: "text-muted-foreground" },
+  { value: "premium", label: "Premium", color: "text-primary" },
+  { value: "pro", label: "PRO", color: "text-blue-400" },
+  { value: "gold", label: "GOLD", color: "text-amber-400" },
+] as const;
+
+function PlanBadges({ access }: { access?: string[] }) {
+  const plans = access ?? ["free"];
+  return (
+    <div className="flex flex-wrap gap-1">
+      {PLAN_OPTIONS.filter((p) => plans.includes(p.value)).map((p) => (
+        <span key={p.value} className={`text-[10px] font-semibold uppercase ${p.color}`}>{p.label}</span>
+      )).reduce((acc: React.ReactNode[], el, i, arr) => [...acc, el, i < arr.length - 1 ? <span key={`sep-${i}`} className="text-muted-foreground/40">·</span> : null], [])}
+    </div>
+  );
+}
+
 function LivesTab() {
   const [lives, setLives] = useState<Live[]>([]);
   const [open, setOpen] = useState(false);
@@ -258,29 +280,69 @@ function LivesTab() {
   const [descricao, setDescricao] = useState("");
   const [link, setLink] = useState("");
   const [data, setData] = useState("");
-  const [isPremium, setIsPremium] = useState(false);
+  const [planAccess, setPlanAccess] = useState<string[]>(["free"]);
   const [statusNew, setStatusNew] = useState<"agendada" | "ao_vivo">("agendada");
-
   const [finalizar, setFinalizar] = useState<string | null>(null);
   const [g, setG] = useState(""); const [p, setP] = useState(""); const [cf, setCf] = useState("");
   const [saving, setSaving] = useState(false);
+  const [duplicateId, setDuplicateId] = useState<string | null>(null);
+  const [dupDate, setDupDate] = useState("");
 
   async function refresh() { setLives(await livesApi.list()); }
   useEffect(() => { refresh(); }, []);
 
+  function togglePlan(val: string) {
+    setPlanAccess((prev) =>
+      prev.includes(val) ? prev.filter((p) => p !== val) : [...prev, val]
+    );
+  }
+
   async function criar(e: React.FormEvent) {
     e.preventDefault();
     if (!titulo || !link || !data) return toast.error("Preencha todos os campos obrigatórios");
+    if (planAccess.length === 0) return toast.error("Selecione ao menos um plano");
     setSaving(true);
     try {
+      const isPremium = planAccess.some((p) => p !== "free");
       await livesApi.create({
         titulo, descricao, link, data: new Date(data).toISOString(),
         status: statusNew, is_premium: isPremium,
+        plan_access: planAccess,
       } as any);
-      setTitulo(""); setDescricao(""); setLink(""); setData(""); setIsPremium(false); setStatusNew("agendada");
+      setTitulo(""); setDescricao(""); setLink(""); setData(""); setPlanAccess(["free"]); setStatusNew("agendada");
       setOpen(false); await refresh();
       toast.success("Live criada");
     } catch (e: any) { toast.error(e.message ?? "Erro ao criar"); }
+    finally { setSaving(false); }
+  }
+
+  async function duplicar(live: Live) {
+    setDuplicateId(live.id);
+    // Pre-fill date as tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    setDupDate(tomorrow.toISOString().slice(0, 16));
+  }
+
+  async function confirmDuplicate(e: React.FormEvent) {
+    e.preventDefault();
+    const src = lives.find((l) => l.id === duplicateId);
+    if (!src || !dupDate) return;
+    setSaving(true);
+    try {
+      await livesApi.create({
+        titulo: src.titulo,
+        descricao: src.descricao,
+        link: src.link,
+        data: new Date(dupDate).toISOString(),
+        status: "agendada",
+        is_premium: src.is_premium,
+        plan_access: src.plan_access ?? ["free"],
+      } as any);
+      setDuplicateId(null); setDupDate("");
+      await refresh();
+      toast.success("Live duplicada");
+    } catch (e: any) { toast.error(e.message ?? "Erro"); }
     finally { setSaving(false); }
   }
 
@@ -320,31 +382,35 @@ function LivesTab() {
               <Plus className="mr-2 h-4 w-4" /> Nova live
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-lg">
             <DialogHeader><DialogTitle>Criar live</DialogTitle></DialogHeader>
             <form onSubmit={criar} className="grid gap-3 py-2">
-              <div><Label>Título *</Label><Input value={titulo} onChange={(e) => setTitulo(e.target.value)} className="mt-1.5" /></div>
+              <div><Label>Título *</Label><Input value={titulo} onChange={(e) => setTitulo(e.target.value)} className="mt-1.5" required /></div>
               <div><Label>Descrição</Label><Input value={descricao} onChange={(e) => setDescricao(e.target.value)} className="mt-1.5" /></div>
-              <div><Label>Link *</Label><Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://..." className="mt-1.5" /></div>
-              <div><Label>Data e hora *</Label><Input type="datetime-local" value={data} onChange={(e) => setData(e.target.value)} className="mt-1.5" /></div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label>Status</Label>
-                  <Select value={statusNew} onValueChange={(v) => setStatusNew(v as any)}>
-                    <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="agendada">Agendada</SelectItem>
-                      <SelectItem value="ao_vivo">Ao vivo</SelectItem>
-                    </SelectContent>
-                  </Select>
+              <div><Label>Link *</Label><Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://..." className="mt-1.5" required /></div>
+              <div><Label>Data e hora *</Label><Input type="datetime-local" value={data} onChange={(e) => setData(e.target.value)} className="mt-1.5" required /></div>
+              <div>
+                <Label>Acesso por plano</Label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {PLAN_OPTIONS.map((opt) => (
+                    <button type="button" key={opt.value}
+                      onClick={() => togglePlan(opt.value)}
+                      className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${planAccess.includes(opt.value) ? `${opt.color} border-current bg-current/10` : "border-border text-muted-foreground"}`}>
+                      {opt.label}
+                    </button>
+                  ))}
                 </div>
-                <div className="flex flex-col">
-                  <Label>Acesso</Label>
-                  <div className="mt-3 flex items-center gap-2">
-                    <Switch checked={isPremium} onCheckedChange={setIsPremium} />
-                    <span className="text-sm">{isPremium ? <span className="flex items-center gap-1 text-primary"><Crown className="h-3.5 w-3.5" /> Premium</span> : "Gratuita"}</span>
-                  </div>
-                </div>
+                <p className="mt-1.5 text-[10px] text-muted-foreground">Free = visível a todos. Cada plano vê suas lives + todas abaixo.</p>
+              </div>
+              <div>
+                <Label>Status inicial</Label>
+                <Select value={statusNew} onValueChange={(v) => setStatusNew(v as any)}>
+                  <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="agendada">Agendada</SelectItem>
+                    <SelectItem value="ao_vivo">Ao vivo</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <DialogFooter>
                 <Button disabled={saving} type="submit" className="bg-primary text-primary-foreground hover:opacity-90">
@@ -356,6 +422,22 @@ function LivesTab() {
         </Dialog>
       </div>
 
+      {/* Duplicate date dialog */}
+      <Dialog open={!!duplicateId} onOpenChange={(v) => !v && setDuplicateId(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Duplicar live</DialogTitle></DialogHeader>
+          <form onSubmit={confirmDuplicate} className="grid gap-3 py-2">
+            <p className="text-sm text-muted-foreground">Escolha a nova data. Todos os outros dados serão copiados.</p>
+            <div><Label>Nova data e hora *</Label><Input type="datetime-local" value={dupDate} onChange={(e) => setDupDate(e.target.value)} className="mt-1.5" required /></div>
+            <DialogFooter>
+              <Button disabled={saving} type="submit" className="bg-primary text-primary-foreground hover:opacity-90">
+                {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Duplicar
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       <div className="glass-card overflow-hidden rounded-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -363,7 +445,7 @@ function LivesTab() {
               <tr>
                 <th className="px-5 py-3 text-left">Título</th>
                 <th className="px-5 py-3 text-left">Data</th>
-                <th className="px-5 py-3 text-left">Acesso</th>
+                <th className="px-5 py-3 text-left">Planos</th>
                 <th className="px-5 py-3 text-left">Status</th>
                 <th className="px-5 py-3 text-right">Resultado</th>
                 <th className="px-5 py-3 text-right">Ações</th>
@@ -376,13 +458,7 @@ function LivesTab() {
                   <tr key={l.id}>
                     <td className="px-5 py-3 font-medium">{l.titulo}</td>
                     <td className="px-5 py-3 text-muted-foreground">{formatDate(l.data)}</td>
-                    <td className="px-5 py-3">
-                      {l.is_premium ? (
-                        <Badge variant="outline" className="border-primary/40 text-primary"><Crown className="mr-1 h-3 w-3" /> Premium</Badge>
-                      ) : (
-                        <Badge variant="outline">Free</Badge>
-                      )}
-                    </td>
+                    <td className="px-5 py-3"><PlanBadges access={l.plan_access} /></td>
                     <td className="px-5 py-3">
                       <Select value={l.status} onValueChange={(v) => setStatusOf(l.id, v as any)} disabled={l.status === "finalizada"}>
                         <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
@@ -397,7 +473,10 @@ function LivesTab() {
                       {l.status === "finalizada" ? `${r >= 0 ? "+" : ""}${formatBRL(r)}` : "—"}
                     </td>
                     <td className="px-5 py-3 text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-1">
+                        <Button size="sm" variant="ghost" onClick={() => duplicar(l)} title="Duplicar live">
+                          <Copy className="h-3.5 w-3.5" />
+                        </Button>
                         {l.status !== "finalizada" && (
                           <Button size="sm" variant="outline" onClick={() => setFinalizar(l.id)}>
                             <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" /> Finalizar

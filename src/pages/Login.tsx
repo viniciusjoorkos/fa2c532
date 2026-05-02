@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
@@ -7,13 +7,22 @@ import DottedSurface from "@/components/home/DottedSurface";
 import Logo from "@/components/Logo";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: { pathname: string } } | null)?.from?.pathname ?? "/app";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const didLoginRef = useRef(false);
+
+  // Navigate once user is loaded after login
+  useEffect(() => {
+    if (didLoginRef.current && user) {
+      didLoginRef.current = false;
+      navigate(from, { replace: true });
+    }
+  }, [user, from, navigate]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,8 +33,8 @@ export default function Login() {
       toast.error(res.error ?? "Falha ao entrar");
       return;
     }
-    toast.success("Bem-vindo de volta.");
-    navigate(from, { replace: true });
+    toast.success("Acesso liberado.");
+    didLoginRef.current = true;
   }
 
   return (

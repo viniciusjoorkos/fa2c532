@@ -147,13 +147,28 @@ export default function DashboardLayout() {
 
         <div className="absolute bottom-0 left-0 right-0 border-t border-sidebar-border p-3">
           <div className="rounded-lg bg-sidebar-accent/50 p-3 text-xs text-muted-foreground">
-            <p className="flex items-center gap-1.5 font-medium text-foreground">
-              {user?.plan === "premium" && <Crown className="h-3 w-3 text-primary" />}
-              {user?.is_gold && <span className="text-amber-400">✦</span>}
-              Plano {user?.plan === "premium" ? "Premium" : "Free"}
-              {user?.is_gold && " · Gold"}
-            </p>
-            <p className="mt-0.5">{user?.plan === "free" ? "Limite de 5 sessões" : "Acesso ilimitado"}</p>
+            {user?.plan === "gold" || user?.is_gold ? (
+              <p className="font-bold tracking-wide" style={{ background: "linear-gradient(135deg,#FFD700,#FFA500,#FFD700)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                ✦ PLANO GOLD
+              </p>
+            ) : user?.plan === "pro" ? (
+              <>
+                <p className="font-semibold text-foreground">PRO</p>
+                <p className="mt-0.5 text-[10px]">Lives Free + Premium + PRO</p>
+              </>
+            ) : user?.plan === "premium" ? (
+              <>
+                <p className="flex items-center gap-1 font-medium text-foreground">
+                  <Crown className="h-3 w-3 text-primary" /> Premium
+                </p>
+                <p className="mt-0.5 text-[10px]">Lives Free + Premium</p>
+              </>
+            ) : (
+              <>
+                <p className="font-medium text-foreground">Free</p>
+                <p className="mt-0.5 text-[10px]">Lives Free</p>
+              </>
+            )}
           </div>
         </div>
       </aside>

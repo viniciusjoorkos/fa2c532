@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, ReactNode, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import type { AuthUser, UserPlan, UserStatus, UserRole } from "@/types";
@@ -15,6 +15,8 @@ interface AuthContextValue {
   refreshUser: () => Promise<void>;
   isAdmin: boolean;
   isPremium: boolean;
+  isPro: boolean;
+  isGold: boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -44,28 +46,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const hydrate = async (s: Session | null) => {
+  const hydrate = useCallback(async (s: Session | null) => {
     setSession(s);
     if (s?.user) {
-      // defer to avoid deadlocks per auth guidance
-      setTimeout(async () => {
-        const u = await loadAuthUser(s.user.id, s.user.email ?? "");
-        setUser(u);
-      }, 0);
+      const u = await loadAuthUser(s.user.id, s.user.email ?? "");
+      setUser(u);
     } else {
       setUser(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    let initialized = false;
     const { data: sub } = supabase.auth.onAuthStateChange((_evt, s) => {
-      hydrate(s);
+      // After initial load, hydrate on every change
+      if (initialized) hydrate(s);
     });
     supabase.auth.getSession().then(({ data }) => {
-      hydrate(data.session).finally(() => setLoading(false));
+      hydrate(data.session).finally(() => {
+        initialized = true;
+        setLoading(false);
+      });
     });
     return () => sub.subscription.unsubscribe();
-  }, []);
+  }, [hydrate]);
 
   const refreshUser = async () => {
     if (session?.user) {
@@ -127,7 +131,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       updatePassword,
       refreshUser,
       isAdmin: user?.role === "admin",
-      isPremium: user?.plan === "premium" || user?.role === "admin",
+      isPremium: user?.plan === "premium" || user?.plan === "pro" || user?.plan === "gold" || user?.role === "admin",
+      isPro: user?.plan === "pro" || user?.plan === "gold" || user?.role === "admin",
+      isGold: user?.plan === "gold" || !!(user?.is_gold) || user?.role === "admin",
     }),
     [user, session, loading]
   );
