@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState, useRef, useCallback, memo } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   ArrowRight,
   Calendar,
@@ -44,6 +44,212 @@ function useAnimatedCounter(target: number, duration = 2000) {
   return { count, ref };
 }
 
+function PricingSection() {
+  const [freePlanOpen, setFreePlanOpen] = useState(true);
+  const [closedMsg, setClosedMsg] = useState("Estamos sem vagas no momento. Tente novamente em breve.");
+
+  useEffect(() => {
+    import("@/services/siteSettingsApi").then(({ siteSettingsApi }) => {
+      siteSettingsApi.getAll().then((all) => {
+        const fp = all.find((s: any) => s.key === "free_plan_open");
+        const msg = all.find((s: any) => s.key === "free_plan_closed_msg");
+        if (fp) setFreePlanOpen(fp.value !== "false");
+        if (msg) setClosedMsg(msg.value);
+      }).catch(() => {});
+    });
+  }, []);
+
+  const plans = [
+    {
+      id: "free",
+      name: "Free",
+      price: "Grátis",
+      sub: "Sem cartão de crédito",
+      highlight: false,
+      badge: null,
+      features: [
+        "Acesso a todas as lives Free",
+        "Dashboard completo de carteira",
+        "Registro de sessões ilimitado",
+        "Ranking e histórico pessoal",
+        "Indicações e recompensas",
+      ],
+      cta: freePlanOpen ? "Criar conta grátis" : null,
+      ctaHref: freePlanOpen ? "/signup" : null,
+      ctaMsg: freePlanOpen ? null : closedMsg,
+    },
+    {
+      id: "premium",
+      name: "Premium",
+      price: "A consultar",
+      sub: "Acesso pago",
+      highlight: false,
+      badge: null,
+      features: [
+        "Tudo do plano Free",
+        "Lives Premium exclusivas",
+        "Análises e setups ao vivo",
+        "Sala fechada com Rezende",
+        "Suporte prioritário",
+      ],
+      cta: "Solicitar acesso",
+      ctaHref: "/signup",
+    },
+    {
+      id: "pro",
+      name: "PRO",
+      price: "A consultar",
+      sub: "Para traders consistentes",
+      highlight: true,
+      badge: "Mais popular",
+      features: [
+        "Tudo do plano Premium",
+        "Lives PRO com entrada ao vivo",
+        "Mentoria individual mensal",
+        "Acesso ao histórico completo de lives",
+        "Candidatura ao plano Gold",
+      ],
+      cta: "Solicitar acesso",
+      ctaHref: "/signup",
+    },
+    {
+      id: "gold",
+      name: "GOLD",
+      price: "Exclusivo",
+      sub: "Por mérito, não por compra",
+      highlight: false,
+      badge: "✦ Não está à venda",
+      features: [
+        "Tudo do plano PRO",
+        "Acesso à página Gold exclusiva",
+        "Reconhecimento no ranking público",
+        "Badge Gold no perfil",
+        "Sessões privadas com Rezende",
+      ],
+      cta: null,
+      goldNote: "Para conquistar o plano Gold, você precisa estar entre o Top 5 do ranking de desempenho do RZ Studio. Faça seu cadastro no plano Free, Premium ou PRO e se candidate com seus resultados.",
+    },
+  ] as const;
+
+  return (
+    <section className="relative bg-white py-24 sm:py-32">
+      <div className="mx-auto max-w-6xl px-6">
+        {/* header */}
+        <div className="text-center">
+          <p className="font-mono text-[10px] uppercase tracking-[0.45em] text-neutral-400">Planos</p>
+          <h2 className="mt-3 font-serif text-3xl font-light leading-tight tracking-tight text-neutral-900 sm:text-5xl">
+            Escolha seu patamar.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-[14px] leading-relaxed text-neutral-500">
+            Comece de graça e evolua conforme seus resultados. O plano Gold não está à venda — ele é conquistado.
+          </p>
+        </div>
+
+        {/* cards grid */}
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {plans.map((plan) => {
+            const isGold = plan.id === "gold";
+            const isPro = plan.id === "pro";
+            return (
+              <div
+                key={plan.id}
+                className={`relative flex flex-col rounded-2xl border p-6 transition ${
+                  isGold
+                    ? "border-yellow-200 bg-gradient-to-b from-yellow-50/80 to-white"
+                    : isPro
+                    ? "border-neutral-900 bg-neutral-950 text-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]"
+                    : "border-neutral-200 bg-white"
+                }`}
+              >
+                {/* badge */}
+                {plan.badge && (
+                  <div className={`mb-4 w-fit rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                    isGold
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-white/10 text-white/70"
+                  }`}>
+                    {plan.badge}
+                  </div>
+                )}
+
+                {/* plan name */}
+                <p className={`text-xs font-semibold uppercase tracking-widest ${
+                  isGold ? "text-yellow-600" : isPro ? "text-white/50" : "text-neutral-400"
+                }`}>
+                  {plan.name}
+                </p>
+
+                {/* price */}
+                <p className={`mt-2 text-3xl font-bold tracking-tight ${
+                  isGold ? "bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent"
+                  : isPro ? "text-white"
+                  : "text-neutral-900"
+                }`}>
+                  {plan.price}
+                </p>
+                <p className={`mt-0.5 text-[11px] ${isPro ? "text-white/40" : "text-neutral-400"}`}>
+                  {plan.sub}
+                </p>
+
+                {/* divider */}
+                <div className={`my-5 h-px ${isGold ? "bg-yellow-200" : isPro ? "bg-white/10" : "bg-neutral-100"}`} />
+
+                {/* features */}
+                <ul className="flex flex-col gap-2.5">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5">
+                      <span className={`mt-0.5 text-xs ${isGold ? "text-yellow-500" : isPro ? "text-emerald-400" : "text-emerald-500"}`}>✓</span>
+                      <span className={`text-[12.5px] leading-snug ${isPro ? "text-white/80" : "text-neutral-600"}`}>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* gold note */}
+                {"goldNote" in plan && plan.goldNote && (
+                  <p className="mt-5 rounded-xl border border-yellow-200 bg-yellow-50 p-3 text-[11px] leading-relaxed text-yellow-700">
+                    {plan.goldNote}
+                  </p>
+                )}
+
+                {/* cta */}
+                <div className="mt-auto pt-6">
+                  {"ctaMsg" in plan && plan.ctaMsg ? (
+                    <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-center text-[11px] text-neutral-500">
+                      {plan.ctaMsg}
+                    </div>
+                  ) : plan.cta && plan.ctaHref ? (
+                    <Link
+                      to={plan.ctaHref}
+                      className={`flex h-10 w-full items-center justify-center rounded-full text-[13px] font-medium transition ${
+                        isPro
+                          ? "bg-white text-neutral-900 hover:bg-neutral-100"
+                          : isGold
+                          ? "border border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
+                          : "border border-neutral-200 bg-white text-neutral-900 hover:border-neutral-400"
+                      }`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  ) : !isGold ? (
+                    <div className="flex h-10 items-center justify-center rounded-full border border-neutral-100 bg-neutral-50 text-[12px] text-neutral-400">
+                      Em breve
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* authority note */}
+        <p className="mt-10 text-center text-[11px] text-neutral-400">
+          Planos pagos são liberados manualmente após análise. Todos os preços e condições são comunicados na confirmação.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 export default function Landing() {
   const [showStickyCta, setShowStickyCta] = useState(false);
   useEffect(() => {
@@ -54,18 +260,19 @@ export default function Landing() {
   const memberCounter = useAnimatedCounter(437);
   return (
     <div className="min-h-screen bg-white text-neutral-900 antialiased selection:bg-amber-200/70">
-      {/* HERO — black, Apple-dark, SaaS feel */}
-      <section className="relative isolate overflow-hidden bg-[#050505] text-white">
+      {/* HERO — ultra black, minimal accent */}
+      <section className="relative isolate overflow-hidden bg-[#080808] text-white">
         <DottedSurface />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_30%,rgba(212,175,55,0.18),transparent_70%)]" />
-        {/* premium fade to white */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-[#050505]/60 to-white" />
+        {/* barely visible accent — charcoal, not gold */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_45%_at_50%_20%,rgba(255,255,255,0.03),transparent_70%)]" />
+        {/* fade to white */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-[#080808]/60 to-white" />
 
         {/* Header */}
         <header className="relative z-10">
           <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
             <Link to="/" className="flex items-center" aria-label="RZ Trader Studio">
-              <Logo className="h-5 sm:h-6" />
+              <Logo className="h-7 sm:h-8" />
             </Link>
             <nav className="flex items-center gap-1.5 text-xs sm:gap-2">
               <Link
@@ -86,19 +293,19 @@ export default function Landing() {
 
         {/* Hero copy */}
         <div className="relative z-10 mx-auto max-w-5xl px-6 pb-24 pt-14 text-center sm:pb-32 sm:pt-20">
-          <p className="font-mono text-[9px] uppercase tracking-[0.45em] text-amber-300/80 sm:text-[10px] sm:tracking-[0.55em]">
-            Falha <span className="mx-2 text-white/30">·</span> é <span className="mx-2 text-white/30">·</span> falha
+          <p className="font-mono text-[9px] uppercase tracking-[0.4em] text-white/30 sm:text-[10px]">
+            RZ Trader Studio
           </p>
 
           <h1 className="mt-5 font-serif text-[34px] font-light leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[72px]">
-            Frente a frente
+            Fiz até 40 mil
             <br />
-            <span className="italic text-amber-300/95">com o expert Rezende.</span>
+            <span className="italic text-white/80">em um dia.</span>
           </h1>
 
           <p className="mx-auto mt-5 max-w-md text-[13px] leading-relaxed text-white/55 sm:max-w-lg sm:text-[14px]">
             O hub fechado de opções binárias para quem quer operar lado a lado
-            com quem vive disso — sem ruído, sem promessa, sem grupo de Telegram.
+            com quem vive disso — sem ruído, sem promessa.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
@@ -117,13 +324,11 @@ export default function Landing() {
             </Link>
           </div>
 
-          <div className="mt-5 flex items-center justify-center gap-4">
-            <p className="text-[10px] uppercase tracking-[0.28em] text-white/30">
-              Vagas limitadas · acesso por convite
-            </p>
+          <div className="mt-5 flex items-center justify-center gap-3">
+            <p className="text-[10px] text-white/25 tracking-[0.2em] uppercase">Vagas limitadas</p>
             <span className="h-1 w-1 rounded-full bg-white/20" />
-            <p className="text-[10px] text-white/40">
-              <span ref={memberCounter.ref} className="font-mono font-bold text-amber-300/70">{memberCounter.count}+</span> membros ativos
+            <p className="text-[10px] text-white/35">
+              <span ref={memberCounter.ref} className="font-mono font-bold text-white/60">{memberCounter.count}+</span> membros
             </p>
           </div>
 
@@ -220,15 +425,6 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* tiny stats below mockup */}
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 font-mono text-[10px] uppercase tracking-[0.24em] text-white/40">
-              <span>+ 400 membros ativos</span>
-              <span className="hidden h-1 w-1 rounded-full bg-white/20 sm:inline-block" />
-              <span>7 lives grátis · 5 premium</span>
-              <span className="hidden h-1 w-1 rounded-full bg-white/20 sm:inline-block" />
-              <span>payout até 92%</span>
             </div>
           </div>
         </div>
@@ -534,27 +730,36 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* PRICING SECTION */}
+        <PricingSection />
+
         {/* FINAL CTA */}
         <section className="relative z-10">
           <div className="mx-auto max-w-3xl px-6 py-24 text-center">
-            <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-amber-700/80">
-              Última palavra
+            <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-neutral-400">
+              Comece hoje
             </p>
             <h2 className="mt-3 font-serif text-3xl font-light leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
               Pare de operar sozinho.
               <br />
-              <span className="italic text-amber-700">Comece hoje.</span>
+              <span className="italic text-neutral-700">Comece com o plano certo.</span>
             </h2>
             <p className="mx-auto mt-5 max-w-md text-[14px] leading-relaxed text-neutral-600">
-              Acesso por convite. Vagas limitadas por turma para preservar a qualidade da sala.
+              Crie sua conta gratuita agora ou escolha um plano premium para acelerar seus resultados.
             </p>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
                 to="/signup"
                 className="group inline-flex h-11 items-center gap-1.5 rounded-full bg-neutral-900 px-6 text-[13px] font-medium text-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.4)] transition hover:bg-neutral-800"
               >
-                Solicitar meu acesso
+                Criar conta gratuita
                 <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex h-11 items-center rounded-full border border-neutral-200 px-6 text-[13px] font-medium text-neutral-700 transition hover:border-neutral-400 hover:text-neutral-900"
+              >
+                Já tenho conta
               </Link>
             </div>
           </div>

@@ -13,12 +13,13 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2, CheckCircle2, Crown, Loader2, UserPlus, Copy, BarChart3, Trophy, Bell, Search } from "lucide-react";
+import { Plus, Trash2, CheckCircle2, Crown, Loader2, UserPlus, Copy, BarChart3, Trophy, Bell, Search, Globe } from "lucide-react";
 import { toast } from "sonner";
 import type { Live, Profile } from "@/types";
 import AnalyticsTab from "@/components/admin/AnalyticsTab";
 import RankingTab from "@/components/admin/RankingTab";
 import NotificationsTab from "@/components/admin/NotificationsTab";
+import SiteAssetsTab from "@/components/admin/SiteAssetsTab";
 
 export default function Admin() {
   return (
@@ -36,6 +37,7 @@ export default function Admin() {
           <TabsTrigger value="lives">Lives</TabsTrigger>
           <TabsTrigger value="notifications"><Bell className="mr-1.5 h-3.5 w-3.5" />Notificações</TabsTrigger>
           <TabsTrigger value="invites">Convites</TabsTrigger>
+          <TabsTrigger value="site"><Globe className="mr-1.5 h-3.5 w-3.5" />Ativos do Site</TabsTrigger>
         </TabsList>
 
         <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
@@ -44,6 +46,7 @@ export default function Admin() {
         <TabsContent value="lives"><LivesTab /></TabsContent>
         <TabsContent value="notifications"><NotificationsTab /></TabsContent>
         <TabsContent value="invites"><InvitesTab /></TabsContent>
+        <TabsContent value="site"><SiteAssetsTab /></TabsContent>
       </Tabs>
     </div>
   );
