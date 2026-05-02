@@ -1,18 +1,64 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Calendar, Wallet, Gift, TrendingUp, TrendingDown, AlertTriangle, X, Trophy, Crown, Flame,
+  Calendar, Wallet, TrendingUp, TrendingDown, AlertTriangle, X, Trophy, Crown, Flame, Clock,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { carteiraApi, convitesApi, expertApi, livesApi, sessoesApi } from "@/services/api";
-import { calcularNivel, formatBRL, formatDate, nivelColor } from "@/lib/calculations";
+import { calcularNivel, formatBRL, formatDate, nivelColor, nivelProgress } from "@/lib/calculations";
 import { StatCard } from "@/components/ui/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BancaChart } from "@/components/home/BancaChart";
 import { PerformanceCard } from "@/components/home/PerformanceCard";
 import { RankingCard } from "@/components/home/RankingCard";
+import { ChatWidget } from "@/components/ChatWidget";
 import type { Carteira, Convite, Live, Sessao } from "@/types";
+import { useLiveCountdown } from "@/hooks/useLiveCountdown";
+
+function LiveCardContent({ live }: { live: Live }) {
+  const { countdown, canEnter, isLive, waitingLink } = useLiveCountdown(live.data, live.status, live.link);
+  return (
+    <div className="flex flex-1 flex-col">
+      <p className="text-base font-bold leading-tight sm:text-lg">{live.titulo}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{formatDate(live.data)}</p>
+      {live.is_premium && (
+        <Badge className="mt-2 w-fit border-primary/40 bg-primary/10 text-primary" variant="outline">
+          <Crown className="mr-1 h-3 w-3" /> Premium
+        </Badge>
+      )}
+
+      <div className="mt-auto pt-3">
+        {isLive && live.link ? (
+          <a href={live.link} target="_blank" rel="noreferrer">
+            <Button className="w-full bg-primary text-primary-foreground hover:opacity-90 animate-pulse-glow">
+              <span className="dot-online mr-2" /> Entrar na Live
+            </Button>
+          </a>
+        ) : canEnter && live.link ? (
+          <a href={live.link} target="_blank" rel="noreferrer">
+            <Button className="w-full bg-primary text-primary-foreground hover:opacity-90">
+              Entrar na Live
+            </Button>
+          </a>
+        ) : waitingLink ? (
+          <div className="rounded-lg border border-border bg-card p-3 text-center text-xs text-muted-foreground">
+            Link será disponibilizado em breve
+          </div>
+        ) : countdown ? (
+          <div className="flex flex-col items-center gap-1.5 rounded-lg border border-border bg-card p-3">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="h-3.5 w-3.5" /> Começa em
+            </div>
+            <p className="font-mono text-lg font-bold tracking-wider">{countdown}</p>
+          </div>
+        ) : (
+          <Button className="w-full" variant="outline" disabled>Live finalizada</Button>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const { user, isPremium } = useAuth();
@@ -43,7 +89,9 @@ export default function Home() {
 
   const ultimoResultado = sessoes[0]?.resultado ?? 0;
   const tresPerdas = sessoes.length >= 3 && sessoes.slice(0, 3).every((s) => s.resultado < 0);
-  const nivel = calcularNivel(carteira?.banca_inicial ?? 0, carteira?.saldo_atual ?? 0);
+  const totalLucro = sessoes.reduce((acc, s) => acc + s.resultado, 0);
+  const nivel = calcularNivel(sessoes.length, totalLucro);
+  const progresso = nivelProgress(sessoes.length, totalLucro);
 
   // Calculate streak for display
   let loginStreak = 0;
@@ -102,14 +150,16 @@ export default function Home() {
               <p className="text-[11px] text-muted-foreground">Acesso às salas exclusivas com o expert ao vivo.</p>
             </div>
           </div>
-          <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90">
-            Fazer upgrade
-          </Button>
+          <Link to="/signup?plan=premium">
+            <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90">
+              Fazer upgrade
+            </Button>
+          </Link>
         </div>
       )}
 
       {/* Stat Cards — 2 cols mobile, 4 cols desktop */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-3">
         <StatCard
           label="Saldo atual"
           value={formatBRL(carteira?.saldo_atual ?? 0)}
@@ -131,17 +181,16 @@ export default function Home() {
           icon={expertOnline ? <TrendingUp className="h-4 w-4 text-primary" /> : <TrendingDown className="h-4 w-4" />}
         />
         <StatCard
-          label="Indicações"
-          value={`${convite.quantidade}`}
-          icon={<Gift className="h-4 w-4" />}
-          trend={{ value: `Nível ${convite.quantidade >= 10 ? "Diamante" : convite.quantidade >= 5 ? "Bronze" : "Inicial"}`, positive: true }}
-        />
-        <StatCard
           label="Seu nível"
           value={
-            <span className="flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-primary sm:h-5 sm:w-5" /> {nivel}
-            </span>
+            <div className="flex flex-col gap-1.5 w-full">
+              <span className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-primary sm:h-5 sm:w-5" /> {nivel}
+              </span>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary/50">
+                <div className="h-full bg-primary transition-all duration-500" style={{ width: `${progresso}%` }} />
+              </div>
+            </div>
           }
           icon={<Badge className={nivelColor(nivel)} variant="outline">{nivel}</Badge>}
         />
@@ -163,20 +212,7 @@ export default function Home() {
           </div>
 
           {proximaLive ? (
-            <div className="flex flex-1 flex-col">
-              <p className="text-base font-bold leading-tight sm:text-lg">{proximaLive.titulo}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{formatDate(proximaLive.data)}</p>
-              {proximaLive.is_premium && (
-                <Badge className="mt-2 w-fit border-primary/40 bg-primary/10 text-primary" variant="outline">
-                  <Crown className="mr-1 h-3 w-3" /> Premium
-                </Badge>
-              )}
-              <a href={proximaLive.link} target="_blank" rel="noreferrer" className="mt-auto pt-3">
-                <Button className="w-full bg-primary text-primary-foreground hover:opacity-90">
-                  Entrar na sala
-                </Button>
-              </a>
-            </div>
+            <LiveCardContent live={proximaLive} />
           ) : (
             <div className="flex flex-1 items-center justify-center text-center text-sm text-muted-foreground">
               Nenhuma live agendada
@@ -215,6 +251,30 @@ export default function Home() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Chat Section */}
+      <div className="mt-4 sm:mt-6">
+        <ChatWidget />
+      </div>
+
+      {/* Social / Support Buttons */}
+      <div className="mt-4 flex flex-col gap-3 sm:mt-6 sm:flex-row">
+        {user?.plan === "free" ? (
+          <Button disabled className="flex-1 bg-muted text-muted-foreground">
+            Assine um plano para liberar suporte
+          </Button>
+        ) : (
+          <Button asChild className="flex-1 bg-primary text-primary-foreground hover:opacity-90">
+            <a href="#" target="_blank" rel="noopener noreferrer">Falar com Rezende</a>
+          </Button>
+        )}
+        <Button asChild variant="outline" className="flex-1 border-primary/40 text-primary hover:bg-primary/10">
+          <a href="#" target="_blank" rel="noopener noreferrer">Entrar no grupo</a>
+        </Button>
+        <Button asChild variant="outline" className="flex-1 border-pink-500/40 text-pink-500 hover:bg-pink-500/10">
+          <a href="#" target="_blank" rel="noopener noreferrer">Instagram Rezende</a>
+        </Button>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Calendar, Video, Wallet, Gift, ExternalLink, User as UserIcon,
-  Shield, LogOut, Menu, MessageSquare, Crown,
+  Shield, LogOut, Menu, MessageSquare, Crown, BookOpen,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import BottomNav from "@/components/layout/BottomNav";
@@ -23,7 +24,9 @@ const navItems = [
   { to: "/app/gravadas", label: "Lives Gravadas", icon: Video },
   { to: "/app/carteira", label: "Minha Carteira", icon: Wallet },
   { to: "/app/indique", label: "Indique e Ganhe", icon: Gift },
+  { to: "/app/inbox", label: "Inbox", icon: MessageSquare },
   { to: "/app/depoimentos", label: "Depoimentos", icon: MessageSquare },
+  { to: "/app/instrucoes", label: "Instruções", icon: BookOpen },
 ];
 
 export default function DashboardLayout() {
@@ -199,6 +202,7 @@ export default function DashboardLayout() {
           </div>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <NotificationBell />
 
             <DropdownMenu>
@@ -250,7 +254,7 @@ export default function DashboardLayout() {
 }
 
 function currentTitle(path: string): string {
-  if (path === "/app" || path === "/app/") return "Dashboard";
+  if (path === "/app" || path === "/app/") return "";
   if (path.startsWith("/app/agenda")) return "Agenda de Lives";
   if (path.startsWith("/app/gravadas")) return "Lives Gravadas";
   if (path.startsWith("/app/carteira")) return "Minha Carteira";
@@ -258,6 +262,7 @@ function currentTitle(path: string): string {
   if (path.startsWith("/app/depoimentos")) return "Depoimentos";
   if (path.startsWith("/app/perfil")) return "Perfil";
   if (path.startsWith("/app/premium")) return "Lives Premium";
+  if (path.startsWith("/app/instrucoes")) return "Instruções";
   if (path.startsWith("/app/admin")) return "Painel Administrativo";
   return "RZ TRADER STUDIO";
 }

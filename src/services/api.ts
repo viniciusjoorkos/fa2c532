@@ -39,7 +39,32 @@ export const sessoesApi = {
       ganhos: Number(s.ganhos),
       perdas: Number(s.perdas),
       resultado: Number(s.resultado),
+      status: s.status || "approved",
     })) as Sessao[];
+  },
+  async pending(): Promise<(Sessao & { user_name: string; user_email: string })[]> {
+    const { data, error } = await supabase
+      .from("sessoes")
+      .select("*, profiles!inner(name, email)")
+      .eq("status", "pending")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map((s) => ({
+      ...s,
+      ganhos: Number(s.ganhos),
+      perdas: Number(s.perdas),
+      resultado: Number(s.resultado),
+      user_name: s.profiles?.name ?? "Desconhecido",
+      user_email: s.profiles?.email ?? "Desconhecido",
+    })) as any;
+  },
+  async approve(id: string): Promise<void> {
+    const { error } = await supabase.from("sessoes").update({ status: "approved" }).eq("id", id);
+    if (error) throw error;
+  },
+  async reject(id: string): Promise<void> {
+    const { error } = await supabase.from("sessoes").update({ status: "rejected" }).eq("id", id);
+    if (error) throw error;
   },
   async add(userId: string, payload: { entradas: number; ganhos: number; perdas: number; duracao: number }): Promise<void> {
     const { error } = await supabase.from("sessoes").insert({
@@ -49,6 +74,7 @@ export const sessoesApi = {
       perdas: payload.perdas,
       duracao: payload.duracao,
       resultado: 0, // trigger recalcula
+      status: "pending",
     });
     if (error) throw error;
   },
@@ -220,7 +246,7 @@ export const adminApi = {
       role: adminSet.has(p.id) ? "admin" : "user",
     }));
   },
-  async updatePlan(userId: string, plan: "free" | "premium"): Promise<void> {
+  async updatePlan(userId: string, plan: "free" | "premium" | "pro" | "gold"): Promise<void> {
     const { error } = await supabase.from("profiles").update({ plan }).eq("id", userId);
     if (error) throw error;
   },
@@ -228,20 +254,33 @@ export const adminApi = {
     const { error } = await supabase.from("profiles").update({ status }).eq("id", userId);
     if (error) throw error;
   },
-  async createUser(payload: { email: string; name?: string; plan?: "free" | "premium"; password?: string }): Promise<{ password?: string }> {
-    const { data, error } = await supabase.functions.invoke("admin-users", {
-      body: { action: "create", ...payload },
+  async createUser(payload: { email: string; name?: string; plan?: "free" | "premium" | "pro" | "gold"; password?: string }): Promise<{ password?: string }> {
+    const pwd = payload.password || Math.random().toString(36).slice(-10) + "A1!";
+    // Use signUp to create auth user — profile is auto-created by trigger
+    const { data, error } = await supabase.auth.signUp({
+      email: payload.email.trim(),
+      password: pwd,
+      options: {
+        data: { name: payload.name?.trim() || payload.email.split("@")[0] },
+      },
     });
     if (error) throw new Error(error.message);
-    if ((data as any)?.error) throw new Error((data as any).error);
-    return { password: (data as any)?.password };
+    if (!data.user) throw new Error("Não foi possível criar o usuário. Verifique se o email já existe.");
+
+    // Wait a moment for the trigger to create profile, then update plan
+    await new Promise((r) => setTimeout(r, 1500));
+    if (payload.plan && payload.plan !== "free") {
+      await supabase.from("profiles").update({ plan: payload.plan }).eq("id", data.user.id);
+    }
+    if (payload.name) {
+      await supabase.from("profiles").update({ name: payload.name.trim() }).eq("id", data.user.id);
+    }
+    return { password: pwd };
   },
   async deleteUser(userId: string): Promise<void> {
-    const { data, error } = await supabase.functions.invoke("admin-users", {
-      body: { action: "delete", user_id: userId },
-    });
+    // Delete profile (cascade will handle related records if FK set)
+    const { error } = await supabase.from("profiles").delete().eq("id", userId);
     if (error) throw new Error(error.message);
-    if ((data as any)?.error) throw new Error((data as any).error);
   },
   async updateGold(userId: string, isGold: boolean): Promise<void> {
     const { error } = await supabase.from("profiles").update({ is_gold: isGold } as any).eq("id", userId);

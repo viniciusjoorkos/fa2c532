@@ -5,25 +5,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { carteiraApi } from "@/services/api";
+import { carteiraApi, sessoesApi } from "@/services/api";
 import { calcularNivel, formatDate, nivelColor } from "@/lib/calculations";
 import { toast } from "sonner";
 import { Camera, Lock, Loader2, Crown } from "lucide-react";
-import type { Carteira } from "@/types";
+import type { Carteira, Sessao } from "@/types";
+import { AvatarCropDialog } from "@/components/AvatarCropDialog";
 
 export default function Perfil() {
   const { user, updateProfile, updatePassword } = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pwd, setPwd] = useState("");
   const [carteira, setCarteira] = useState<Carteira | null>(null);
+  const [sessoes, setSessoes] = useState<Sessao[]>([]);
   const [saving, setSaving] = useState(false);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [cropImageUrl, setCropImageUrl] = useState("");
 
   useEffect(() => {
-    if (user) carteiraApi.byUser(user.id).then(setCarteira);
+    if (user) {
+      carteiraApi.byUser(user.id).then(setCarteira);
+      sessoesApi.byUser(user.id).then(setSessoes);
+    }
   }, [user]);
 
   if (!user) return null;
-  const nivel = calcularNivel(carteira?.banca_inicial ?? 0, carteira?.saldo_atual ?? 0);
+  const totalLucro = sessoes.reduce((acc, s) => acc + s.resultado, 0);
+  const nivel = calcularNivel(sessoes.length, totalLucro);
   const initials = user.name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
 
   async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -31,12 +39,18 @@ export default function Perfil() {
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) return toast.error("Máximo 2MB");
     const reader = new FileReader();
-    reader.onload = async () => {
-      const res = await updateProfile({ avatar_url: reader.result as string });
-      if (res.ok) toast.success("Avatar atualizado!");
-      else toast.error(res.error ?? "Erro");
+    reader.onload = () => {
+      setCropImageUrl(reader.result as string);
+      setCropOpen(true);
+      if (fileRef.current) fileRef.current.value = ""; // Reset input
     };
     reader.readAsDataURL(file);
+  }
+
+  async function handleSaveAvatar(base64: string) {
+    const res = await updateProfile({ avatar_url: base64 });
+    if (res.ok) toast.success("Avatar atualizado!");
+    else toast.error(res.error ?? "Erro ao salvar avatar");
   }
 
   async function trocarSenha(e: React.FormEvent) {
@@ -123,6 +137,13 @@ export default function Perfil() {
           </form>
         </div>
       </div>
+
+      <AvatarCropDialog 
+        open={cropOpen} 
+        onOpenChange={setCropOpen} 
+        imageUrl={cropImageUrl} 
+        onSave={handleSaveAvatar} 
+      />
     </div>
   );
 }

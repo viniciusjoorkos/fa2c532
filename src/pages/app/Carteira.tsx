@@ -13,6 +13,8 @@ import { Wallet, TrendingUp, TrendingDown, Plus, Lock, Loader2 } from "lucide-re
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import type { Carteira, Sessao } from "@/types";
+import { useLiveCountdown } from "@/hooks/useLiveCountdown";
+import { livesApi } from "@/services/api";
 
 const FREE_LIMIT = 5;
 
@@ -21,6 +23,9 @@ export default function Carteira() {
   const [carteira, setCarteira] = useState<Carteira | null>(null);
   const [sessoes, setSessoes] = useState<Sessao[]>([]);
   const [loading, setLoading] = useState(true);
+  const [proximaLive, setProximaLive] = useState<any>(null);
+
+  const { isLiveActive } = useLiveCountdown(proximaLive?.data);
 
   const [bancaInicial, setBancaInicial] = useState("");
   const [openSession, setOpenSession] = useState(false);
@@ -35,9 +40,14 @@ export default function Carteira() {
     if (!user) return;
     setLoading(true);
     try {
-      const [c, s] = await Promise.all([carteiraApi.byUser(user.id), sessoesApi.byUser(user.id)]);
+      const [c, s, lives] = await Promise.all([
+        carteiraApi.byUser(user.id), 
+        sessoesApi.byUser(user.id),
+        livesApi.list()
+      ]);
       setCarteira(c);
       setSessoes(s);
+      setProximaLive(lives.filter((l) => l.status === "agendada")[0] ?? null);
     } finally {
       setLoading(false);
     }
@@ -46,8 +56,9 @@ export default function Carteira() {
 
   if (!user) return null;
 
-  const totalLucro = sessoes.reduce((acc, s) => acc + s.resultado, 0);
-  const limiteAtingido = user.plan === "free" && sessoes.length >= FREE_LIMIT;
+  const sessoesAprovadas = sessoes.filter(s => s.status === 'approved');
+  const totalLucro = sessoesAprovadas.reduce((acc, s) => acc + s.resultado, 0);
+  const limiteAtingido = user.plan === "free" && sessoesAprovadas.length >= FREE_LIMIT;
 
   async function salvarBanca(e: React.FormEvent) {
     e.preventDefault();
@@ -78,7 +89,7 @@ export default function Carteira() {
       await refresh();
       setEntradas(""); setGanhos(""); setPerdas(""); setDuracao("");
       setOpenSession(false);
-      toast.success("Sessão registrada!");
+      toast.success("Sessão registrada! Resultado pendente de aprovação.");
     } catch (e: any) {
       toast.error(e.message ?? "Erro ao salvar");
     } finally {
@@ -128,13 +139,18 @@ export default function Carteira() {
 
         <Dialog open={openSession} onOpenChange={setOpenSession}>
           <DialogTrigger asChild>
-            <Button disabled={limiteAtingido} className="bg-primary text-primary-foreground hover:opacity-90">
-              {limiteAtingido ? <Lock className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}
+            <Button disabled={limiteAtingido || !isLiveActive} className="bg-primary text-primary-foreground hover:opacity-90">
+              {limiteAtingido || !isLiveActive ? <Lock className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}
               Nova sessão
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Registrar sessão</DialogTitle></DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Registrar sessão</DialogTitle>
+              <div className="mt-2 rounded-md bg-warning/10 p-3 text-xs text-warning border border-warning/20">
+                <strong>Atenção:</strong> Registre sua atividade real. Tudo é revisado manualmente e seu histórico pode ser resetado caso seja identificado o registro de ganhos ou perdas falsos.
+              </div>
+            </DialogHeader>
             <form onSubmit={salvarSessao} className="grid gap-4 py-2">
               <div className="grid grid-cols-2 gap-3">
                 <div><Label>Entradas</Label><Input type="number" min={1} value={entradas} onChange={(e) => setEntradas(e.target.value)} className="mt-1.5" /></div>
@@ -152,6 +168,12 @@ export default function Carteira() {
         </Dialog>
       </div>
 
+      {!isLiveActive && !limiteAtingido && (
+        <div className="rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-primary">
+          Essa seção é liberada quando iniciamos a LIVE ou a 10 minutos antes.
+        </div>
+      )}
+
       {limiteAtingido && (
         <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-sm text-warning">
           Você atingiu o limite de {FREE_LIMIT} sessões do plano Free. Faça upgrade para Premium para continuar.
@@ -161,11 +183,11 @@ export default function Carteira() {
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard accent="primary" label="Saldo atual" value={formatBRL(carteira.saldo_atual)} icon={<Wallet className="h-4 w-4" />} />
         <StatCard
-          label="Lucro / Prejuízo total"
+          label="Lucro / Prejuízo total (Aprovado)"
           value={<span className={totalLucro >= 0 ? "text-primary" : "text-destructive"}>{totalLucro >= 0 ? "+" : ""}{formatBRL(totalLucro)}</span>}
           icon={totalLucro >= 0 ? <TrendingUp className="h-4 w-4 text-primary" /> : <TrendingDown className="h-4 w-4 text-destructive" />}
         />
-        <StatCard label="Total de sessões" value={`${sessoes.length}`} icon={<Wallet className="h-4 w-4" />} />
+        <StatCard label="Total de sessões" value={`${sessoesAprovadas.length}`} icon={<Wallet className="h-4 w-4" />} />
       </div>
 
       <div className="glass-card overflow-hidden rounded-xl">
@@ -183,11 +205,12 @@ export default function Carteira() {
                 <th className="px-5 py-3 text-right">Perdas</th>
                 <th className="px-5 py-3 text-right">Duração</th>
                 <th className="px-5 py-3 text-right">Resultado</th>
+                <th className="px-5 py-3 text-center">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {sessoes.map((s) => (
-                <tr key={s.id} className="hover:bg-background/30">
+                <tr key={s.id} className={`hover:bg-background/30 ${s.status === 'rejected' ? 'opacity-50' : ''}`}>
                   <td className="px-5 py-3">{formatDate(s.created_at)}</td>
                   <td className="px-5 py-3 text-right">{s.entradas}</td>
                   <td className="px-5 py-3 text-right text-primary">{formatBRL(s.ganhos)}</td>
@@ -195,6 +218,11 @@ export default function Carteira() {
                   <td className="px-5 py-3 text-right">{s.duracao}min</td>
                   <td className={`px-5 py-3 text-right font-bold ${s.resultado >= 0 ? "text-primary" : "text-destructive"}`}>
                     {s.resultado >= 0 ? "+" : ""}{formatBRL(s.resultado)}
+                  </td>
+                  <td className="px-5 py-3 text-center">
+                    {s.status === 'pending' && <Badge variant="outline" className="text-warning border-warning">Pendente</Badge>}
+                    {s.status === 'approved' && <Badge variant="outline" className="text-primary border-primary">Aprovado</Badge>}
+                    {s.status === 'rejected' && <Badge variant="outline" className="text-destructive border-destructive">Reprovado</Badge>}
                   </td>
                 </tr>
               ))}

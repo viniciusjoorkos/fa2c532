@@ -75,14 +75,14 @@ function PricingSection() {
         "Indicações e recompensas",
       ],
       cta: freePlanOpen ? "Criar conta grátis" : null,
-      ctaHref: freePlanOpen ? "/signup" : null,
+      ctaHref: freePlanOpen ? "/signup?plan=free" : null,
       ctaMsg: freePlanOpen ? null : closedMsg,
     },
     {
       id: "premium",
       name: "Premium",
-      price: "A consultar",
-      sub: "Acesso pago",
+      price: "R$ 27",
+      sub: "por mês",
       highlight: false,
       badge: null,
       features: [
@@ -92,14 +92,14 @@ function PricingSection() {
         "Sala fechada com Rezende",
         "Suporte prioritário",
       ],
-      cta: "Solicitar acesso",
-      ctaHref: "/signup",
+      cta: "Assinar Premium",
+      ctaHref: "/signup?plan=premium",
     },
     {
       id: "pro",
       name: "PRO",
-      price: "A consultar",
-      sub: "Para traders consistentes",
+      price: "R$ 146",
+      sub: "por mês",
       highlight: true,
       badge: "Mais popular",
       features: [
@@ -109,8 +109,8 @@ function PricingSection() {
         "Acesso ao histórico completo de lives",
         "Candidatura ao plano Gold",
       ],
-      cta: "Solicitar acesso",
-      ctaHref: "/signup",
+      cta: "Assinar PRO",
+      ctaHref: "/signup?plan=pro",
     },
     {
       id: "gold",
@@ -132,7 +132,7 @@ function PricingSection() {
   ] as const;
 
   return (
-    <section className="relative bg-white py-24 sm:py-32">
+    <section id="planos" className="relative bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-6">
         {/* header */}
         <div className="text-center">
@@ -309,13 +309,13 @@ export default function Landing() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
-            <Link
-              to="/signup"
+            <button
+              onClick={() => document.getElementById("planos")?.scrollIntoView({ behavior: "smooth" })}
               className="group inline-flex h-10 items-center gap-1.5 rounded-full bg-white px-5 text-[13px] font-medium text-neutral-900 shadow-[0_10px_40px_-10px_rgba(255,255,255,0.4)] transition hover:bg-neutral-100"
             >
               Quero meu acesso
               <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
-            </Link>
+            </button>
             <Link
               to="/login"
               className="inline-flex h-10 items-center rounded-full px-4 text-[13px] font-medium text-white/70 transition hover:text-white"
@@ -803,6 +803,8 @@ export default function Landing() {
             </div>
           </div>
         </footer>
+        {/* Spacer for sticky CTA on mobile */}
+        <div className="h-20 sm:hidden"></div>
       </div>
 
       {/* Sticky CTA — mobile only */}
@@ -811,13 +813,13 @@ export default function Landing() {
           showStickyCta ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        <Link
-          to="/signup"
+        <button
+          onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); setTimeout(() => document.getElementById("planos")?.scrollIntoView({ behavior: "smooth" }), 300); }}
           className="flex h-11 w-full items-center justify-center gap-1.5 rounded-full bg-white text-[13px] font-semibold text-neutral-900 shadow-[0_4px_20px_-4px_rgba(255,255,255,0.3)] transition active:scale-[0.98]"
         >
-          Quero meu acesso
+          Ver planos
           <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+        </button>
       </div>
     </div>
   );

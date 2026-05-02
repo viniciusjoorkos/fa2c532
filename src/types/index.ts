@@ -31,6 +31,7 @@ export interface Sessao {
   perdas: number;
   duracao: number;
   resultado: number;
+  status?: "pending" | "approved" | "rejected";
   created_at: string;
 }
 
@@ -66,7 +67,7 @@ export interface Depoimento {
   user_name?: string;
 }
 
-export type Nivel = "Iniciante" | "Bronze" | "Prata" | "Ouro";
+export type Nivel = "Novato" | "Aprendiz" | "Trader" | "Consistente" | "Expert" | "Elite" | "Lenda";
 
 // ===== v2.0 additions =====
 

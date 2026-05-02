@@ -20,6 +20,9 @@ import Depoimentos from "./pages/app/Depoimentos";
 import Perfil from "./pages/app/Perfil";
 import Admin from "./pages/app/Admin";
 import Premium from "./pages/app/Premium";
+import Instrucoes from "./pages/app/Instrucoes";
+import PublicProfile from "./pages/app/PublicProfile";
+import Inbox from "./pages/app/Inbox";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 
@@ -53,8 +56,11 @@ const App = () => (
               <Route path="gravadas" element={<Gravadas />} />
               <Route path="premium" element={<Premium />} />
               <Route path="indique" element={<Indique />} />
+              <Route path="instrucoes" element={<Instrucoes />} />
               <Route path="depoimentos" element={<Depoimentos />} />
               <Route path="perfil" element={<Perfil />} />
+              <Route path="usuario/:id" element={<PublicProfile />} />
+              <Route path="inbox" element={<Inbox />} />
               <Route
                 path="admin"
                 element={

@@ -20,6 +20,7 @@ import AnalyticsTab from "@/components/admin/AnalyticsTab";
 import RankingTab from "@/components/admin/RankingTab";
 import NotificationsTab from "@/components/admin/NotificationsTab";
 import SiteAssetsTab from "@/components/admin/SiteAssetsTab";
+import { AdminSessionsTab } from "@/components/admin/AdminSessionsTab";
 
 export default function Admin() {
   return (
@@ -35,6 +36,7 @@ export default function Admin() {
           <TabsTrigger value="users">Usuários</TabsTrigger>
           <TabsTrigger value="ranking"><Trophy className="mr-1.5 h-3.5 w-3.5" />Ranking</TabsTrigger>
           <TabsTrigger value="lives">Lives</TabsTrigger>
+          <TabsTrigger value="sessions">Sessões</TabsTrigger>
           <TabsTrigger value="notifications"><Bell className="mr-1.5 h-3.5 w-3.5" />Notificações</TabsTrigger>
           <TabsTrigger value="invites">Convites</TabsTrigger>
           <TabsTrigger value="site"><Globe className="mr-1.5 h-3.5 w-3.5" />Ativos do Site</TabsTrigger>
@@ -44,6 +46,7 @@ export default function Admin() {
         <TabsContent value="users"><UsersTab /></TabsContent>
         <TabsContent value="ranking"><RankingTab /></TabsContent>
         <TabsContent value="lives"><LivesTab /></TabsContent>
+        <TabsContent value="sessions"><AdminSessionsTab /></TabsContent>
         <TabsContent value="notifications"><NotificationsTab /></TabsContent>
         <TabsContent value="invites"><InvitesTab /></TabsContent>
         <TabsContent value="site"><SiteAssetsTab /></TabsContent>
@@ -61,7 +64,7 @@ function UsersTab() {
   const [openNew, setOpenNew] = useState(false);
   const [nEmail, setNEmail] = useState("");
   const [nName, setNName] = useState("");
-  const [nPlan, setNPlan] = useState<"free" | "premium">("free");
+  const [nPlan, setNPlan] = useState<"free" | "premium" | "pro" | "gold">("free");
   const [nPassword, setNPassword] = useState("");
   const [creating, setCreating] = useState(false);
   const [generated, setGenerated] = useState<string | null>(null);
@@ -73,7 +76,7 @@ function UsersTab() {
   }
   useEffect(() => { refresh(); }, []);
 
-  async function changePlan(id: string, plan: "free" | "premium") {
+  async function changePlan(id: string, plan: "free" | "premium" | "pro" | "gold") {
     await adminApi.updatePlan(id, plan);
     await refresh();
     toast.success("Plano atualizado");
@@ -130,6 +133,8 @@ function UsersTab() {
             <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="free">Free</SelectItem>
             <SelectItem value="premium">Premium</SelectItem>
+            <SelectItem value="pro">PRO</SelectItem>
+            <SelectItem value="gold">GOLD</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -524,6 +529,7 @@ function LivesTab() {
 function InvitesTab() {
   const [users, setUsers] = useState<(Profile & { role: "admin" | "user" })[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [search, setSearch] = useState("");
 
   async function refresh() {
     const [u, list] = await Promise.all([adminApi.listUsers(), convitesApi.listAll()]);
@@ -538,41 +544,60 @@ function InvitesTab() {
     toast.success("Convites atualizados");
   }
 
+  const filtered = users.filter((u) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q);
+  });
+
   return (
-    <div className="glass-card overflow-hidden rounded-xl">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-background/40 text-xs uppercase tracking-wider text-muted-foreground">
-            <tr>
-              <th className="px-5 py-3 text-left">Usuário</th>
-              <th className="px-5 py-3 text-left">Email</th>
-              <th className="px-5 py-3 text-right">Convites</th>
-              <th className="px-5 py-3 text-right">Ações</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {users.map((u) => {
-              const q = counts[u.id] ?? 0;
-              return (
-                <tr key={u.id}>
-                  <td className="px-5 py-3">{u.name}</td>
-                  <td className="px-5 py-3 text-muted-foreground">{u.email}</td>
-                  <td className="px-5 py-3 text-right font-bold">{q}</td>
-                  <td className="px-5 py-3 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="outline" onClick={() => set(u.id, q + 1)}>+1</Button>
-                      <Button size="sm" variant="outline" onClick={() => set(u.id, q + 5)}>+5</Button>
-                      <Button size="sm" variant="ghost" onClick={() => set(u.id, 0)}>Zerar</Button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-            {users.length === 0 && (
-              <tr><td colSpan={4} className="px-5 py-8 text-center text-muted-foreground">Nenhum usuário</td></tr>
-            )}
-          </tbody>
-        </table>
+    <div className="flex flex-col gap-4">
+      <div className="glass-card rounded-xl p-4">
+        <p className="text-sm text-muted-foreground">
+          Gerencie quantos convites cada usuário pode enviar. Use os botões para adicionar convites ou zerar o saldo.
+        </p>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input placeholder="Buscar por nome ou email..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+      </div>
+
+      <div className="glass-card overflow-hidden rounded-xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-background/40 text-xs uppercase tracking-wider text-muted-foreground">
+              <tr>
+                <th className="px-5 py-3 text-left">Usuário</th>
+                <th className="px-5 py-3 text-left">Email</th>
+                <th className="px-5 py-3 text-right">Convites</th>
+                <th className="px-5 py-3 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filtered.map((u) => {
+                const q = counts[u.id] ?? 0;
+                return (
+                  <tr key={u.id}>
+                    <td className="px-5 py-3">{u.name}</td>
+                    <td className="px-5 py-3 text-muted-foreground">{u.email}</td>
+                    <td className="px-5 py-3 text-right font-bold">{q}</td>
+                    <td className="px-5 py-3 text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" variant="outline" onClick={() => set(u.id, q + 1)} title="Adicionar 1 convite">+1 convite</Button>
+                        <Button size="sm" variant="outline" onClick={() => set(u.id, q + 5)} title="Adicionar 5 convites">+5 convites</Button>
+                        <Button size="sm" variant="ghost" onClick={() => set(u.id, 0)} title="Zerar convites">Zerar</Button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+              {filtered.length === 0 && (
+                <tr><td colSpan={4} className="px-5 py-8 text-center text-muted-foreground">Nenhum usuário</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
