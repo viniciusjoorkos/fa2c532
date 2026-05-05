@@ -2,20 +2,15 @@ import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import {
   ArrowRight,
-  Calendar,
-  Wallet,
   Trophy,
   ShieldCheck,
   TrendingUp,
-  TrendingDown,
-  Activity,
-  Timer,
   Target,
   LineChart,
 } from "lucide-react";
-import DottedSurface from "@/components/home/DottedSurface";
 import SmokeBackdrop from "@/components/home/SmokeBackdrop";
 import ScrollPiece from "@/components/home/ScrollPiece";
+import ScrollVideo from "@/components/home/ScrollVideo";
 import RezendeFloaters from "@/components/home/RezendeFloaters";
 import Logo from "@/components/Logo";
 import timelineImg from "@/assets/student-timeline.jpg";
@@ -257,19 +252,30 @@ export default function Landing() {
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
-  const memberCounter = useAnimatedCounter(437);
   return (
     <div className="min-h-screen bg-white text-neutral-900 antialiased selection:bg-amber-200/70">
-      {/* HERO — ultra black, minimal accent */}
-      <section className="relative isolate overflow-hidden bg-[#080808] text-white">
-        <DottedSurface />
-        {/* barely visible accent — charcoal, not gold */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_45%_at_50%_20%,rgba(255,255,255,0.03),transparent_70%)]" />
-        {/* fade to white */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-[#080808]/60 to-white" />
+      {/* HERO — full-bleed scroll-driven video */}
+      <section className="relative isolate overflow-hidden bg-[#050505] text-white" style={{ minHeight: '100vh' }}>
+        {/* Scroll-driven video background */}
+        <ScrollVideo
+          mp4Src="/hero/minha-narrativa-1.mp4"
+          webmSrc="/hero/minha-narrativa-1.webm"
+          posterSrc="/hero/minha-narrativa-1-poster.jpg"
+          className="absolute inset-0 h-full w-full"
+          objectFit="cover"
+          scrollRangeMultiplier={1.8}
+          startFromBottom={false}
+        />
+
+        {/* Cinematic overlays for text legibility */}
+        <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-b from-black/50 via-transparent to-black/70" />
+        <div className="pointer-events-none absolute inset-0 z-[3] bg-[radial-gradient(60%_40%_at_50%_30%,transparent,rgba(0,0,0,0.4)_100%)]" />
+
+        {/* fade to white at bottom */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[4] h-40 bg-gradient-to-b from-transparent via-[#050505]/60 to-white" />
 
         {/* Header */}
-        <header className="relative z-10">
+        <header className="relative z-[10]">
           <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
             <Link to="/" className="flex items-center" aria-label="RZ Trader Studio">
               <Logo className="h-7 sm:h-8" />
@@ -277,7 +283,7 @@ export default function Landing() {
             <nav className="flex items-center gap-1.5 text-xs sm:gap-2">
               <Link
                 to="/login"
-                className="inline-flex h-8 items-center rounded-full border border-white/20 bg-transparent px-3.5 text-[12px] font-medium text-white transition hover:bg-white/10 sm:px-4"
+                className="inline-flex h-8 items-center rounded-full border border-white/20 bg-black/30 px-3.5 text-[12px] font-medium text-white backdrop-blur-sm transition hover:bg-white/10 sm:px-4"
               >
                 LOGIN
               </Link>
@@ -291,141 +297,22 @@ export default function Landing() {
           </div>
         </header>
 
-        {/* Hero copy */}
-        <div className="relative z-10 mx-auto max-w-5xl px-6 pb-24 pt-14 text-center sm:pb-32 sm:pt-20">
-          <p className="font-mono text-[9px] uppercase tracking-[0.4em] text-white/30 sm:text-[10px]">
-            RZ Trader Studio
-          </p>
-
-          <h1 className="mt-5 font-serif text-[34px] font-light leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[72px]">
-            Fiz até 40 mil
+        {/* Hero copy — REZENDE MEET */}
+        <div className="relative z-[10] mx-auto flex min-h-[calc(100vh-64px)] max-w-5xl flex-col items-center justify-center px-6 pb-32 pt-10 text-center">
+          <h1 className="font-serif text-[48px] font-bold leading-[1] tracking-tight text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.6)] sm:text-[72px] lg:text-[96px]">
+            REZENDE
             <br />
-            <span className="italic text-white/80">em um dia.</span>
+            <span className="bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">MEET</span>
           </h1>
 
-          <p className="mx-auto mt-5 max-w-md text-[13px] leading-relaxed text-white/55 sm:max-w-lg sm:text-[14px]">
-            O hub fechado de opções binárias para quem quer operar lado a lado
-            com quem vive disso — sem ruído, sem promessa.
+          <p className="mt-4 max-w-lg text-[14px] font-light leading-relaxed tracking-wide text-white/70 drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] sm:mt-6 sm:text-[16px] lg:text-[18px]" style={{ fontWeight: 300 }}>
+            Entre no free ou no vip só entre e vamos para o topo
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
-            <button
-              onClick={() => document.getElementById("planos")?.scrollIntoView({ behavior: "smooth" })}
-              className="group inline-flex h-10 items-center gap-1.5 rounded-full bg-white px-5 text-[13px] font-medium text-neutral-900 shadow-[0_10px_40px_-10px_rgba(255,255,255,0.4)] transition hover:bg-neutral-100"
-            >
-              Quero meu acesso
-              <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
-            </button>
-            <Link
-              to="/login"
-              className="inline-flex h-10 items-center rounded-full px-4 text-[13px] font-medium text-white/70 transition hover:text-white"
-            >
-              Já sou membro →
-            </Link>
-          </div>
-
-          <div className="mt-5 flex items-center justify-center gap-3">
-            <p className="text-[10px] text-white/25 tracking-[0.2em] uppercase">Vagas limitadas</p>
-            <span className="h-1 w-1 rounded-full bg-white/20" />
-            <p className="text-[10px] text-white/35">
-              <span ref={memberCounter.ref} className="font-mono font-bold text-white/60">{memberCounter.count}+</span> membros
-            </p>
-          </div>
-
-          {/* SaaS hero mockup — trading panel */}
-          <div className="relative mx-auto mt-14 max-w-3xl sm:mt-16">
-            <div className="absolute -inset-x-10 -top-10 -bottom-6 -z-10 rounded-[2rem] bg-[radial-gradient(50%_60%_at_50%_30%,rgba(212,175,55,0.18),transparent_70%)] blur-2xl" />
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_40px_120px_-30px_rgba(0,0,0,0.6)] backdrop-blur">
-              {/* window chrome */}
-              <div className="flex items-center justify-between border-b border-white/5 px-4 py-2.5">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-white/15" />
-                  <span className="h-2 w-2 rounded-full bg-white/15" />
-                  <span className="h-2 w-2 rounded-full bg-white/15" />
-                </div>
-                <div className="flex items-center gap-2 text-[10px] text-white/40">
-                  <Activity className="h-3 w-3" />
-                  <span className="font-mono tracking-wider">EURUSD · M1</span>
-                </div>
-                <div className="flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/5 px-2 py-0.5 text-[9px] uppercase tracking-[0.2em] text-emerald-300">
-                  <span className="h-1 w-1 rounded-full bg-emerald-400" /> live
-                </div>
-              </div>
-
-              {/* chart area */}
-              <div className="grid grid-cols-12">
-                <div className="col-span-12 sm:col-span-9 px-5 pb-5 pt-4">
-                  <div className="flex items-baseline justify-between">
-                    <div className="text-left">
-                      <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/40">
-                        Payout
-                      </p>
-                      <p className="mt-1 font-serif text-2xl font-light text-white">
-                        92<span className="text-white/40">%</span>
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[11px] text-emerald-300">
-                      <TrendingUp className="h-3 w-3" />
-                      + R$ 2.200
-                    </div>
-                  </div>
-
-                  {/* candles */}
-                  <div className="mt-4 flex h-24 items-end justify-between gap-1">
-                    {[
-                      { h: 30, c: "up" },
-                      { h: 45, c: "up" },
-                      { h: 38, c: "down" },
-                      { h: 52, c: "up" },
-                      { h: 60, c: "up" },
-                      { h: 48, c: "down" },
-                      { h: 70, c: "up" },
-                      { h: 65, c: "up" },
-                      { h: 55, c: "down" },
-                      { h: 78, c: "up" },
-                      { h: 88, c: "up" },
-                      { h: 72, c: "down" },
-                      { h: 92, c: "up" },
-                      { h: 80, c: "up" },
-                    ].map((b, i) => (
-                      <div
-                        key={i}
-                        style={{ height: `${b.h}%` }}
-                        className={`w-2 rounded-sm ${
-                          b.c === "up" ? "bg-emerald-400/80" : "bg-rose-400/70"
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="mt-3 flex items-center justify-between font-mono text-[9px] text-white/30">
-                    <span>09:42</span>
-                    <span>09:48</span>
-                    <span>09:54</span>
-                    <span>10:00</span>
-                  </div>
-                </div>
-
-                {/* side panel — CALL / PUT */}
-                <div className="col-span-12 border-t border-white/5 px-5 py-4 sm:col-span-3 sm:border-l sm:border-t-0">
-                  <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-white/40">
-                    Próxima entrada
-                  </p>
-                  <div className="mt-3 flex items-center gap-1.5 text-[11px] text-white/70">
-                    <Timer className="h-3 w-3 text-amber-300" />
-                    <span className="font-mono">00:47</span>
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-1">
-                    <div className="flex items-center justify-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/10 py-2 text-[11px] font-medium text-emerald-300">
-                      <TrendingUp className="h-3 w-3" /> CALL
-                    </div>
-                    <div className="flex items-center justify-center gap-1.5 rounded-md border border-rose-400/20 bg-rose-400/5 py-2 text-[11px] font-medium text-rose-300/70">
-                      <TrendingDown className="h-3 w-3" /> PUT
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* Subtle scroll indicator */}
+          <div className="mt-12 flex flex-col items-center gap-2 animate-bounce sm:mt-16">
+            <span className="text-[9px] uppercase tracking-[0.4em] text-white/30">Scroll</span>
+            <div className="h-8 w-px bg-gradient-to-b from-white/40 to-transparent" />
           </div>
         </div>
       </section>

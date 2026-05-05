@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import goldenKing from "@/assets/golden-king.png";
+import ScrollVideo from "@/components/home/ScrollVideo";
 
 /**
  * ScrollPiece — premium decorative element that sits in the middle of the page.
- * When the user scrolls into view, it slides down a few centimeters with the
- * scroll, then locks in place. Pure CSS transform driven by a single rAF
- * scroll listener (passive, throttled). Lightweight and GPU-accelerated.
+ * Replaced the golden king chair with a scroll-driven video of the golden bull
+ * melting. The parallax translation effect is preserved.
  *
- * Usage: place inside a relatively-positioned section. It absolutely fills
- * a container; size via the wrapper's height.
+ * Performance notes:
+ *  - ScrollVideo handles lazy loading, poster display, and scroll sync internally.
+ *  - Outer parallax is a single rAF listener (shared with ScrollVideo's own).
+ *  - Pure GPU transforms (translate3d). No layout thrash.
  */
 export default function ScrollPiece() {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -71,14 +72,16 @@ export default function ScrollPiece() {
       >
         {/* Soft gold glow halo */}
         <div className="absolute h-[70%] w-[70%] rounded-full bg-[radial-gradient(closest-side,rgba(212,175,55,0.30),transparent_70%)] blur-2xl" />
-        <img
-          src={goldenKing}
-          alt=""
-          width={384}
-          height={512}
-          loading="lazy"
-          decoding="async"
-          className="relative h-full w-auto object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.18)]"
+        {/* Scroll-driven bull video */}
+        <ScrollVideo
+          mp4Src="/hero/minha-narrativa-2.mp4"
+          webmSrc="/hero/minha-narrativa-2.webm"
+          posterSrc="/hero/minha-narrativa-2-poster.jpg"
+          className="relative h-full w-full rounded-2xl"
+          videoClassName="rounded-2xl"
+          objectFit="contain"
+          scrollRangeMultiplier={2.0}
+          startFromBottom
         />
       </div>
     </div>
