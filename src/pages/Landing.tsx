@@ -277,15 +277,15 @@ export default function Landing() {
             <nav className="flex items-center gap-1.5 text-xs sm:gap-2">
               <Link
                 to="/login"
-                className="hidden h-8 items-center rounded-full px-3 text-[12px] text-white/70 transition hover:text-white sm:inline-flex"
+                className="inline-flex h-8 items-center rounded-full border border-white/20 bg-transparent px-3.5 text-[12px] font-medium text-white transition hover:bg-white/10 sm:px-4"
               >
-                Entrar
+                LOGIN
               </Link>
               <Link
                 to="/signup"
                 className="inline-flex h-8 items-center rounded-full bg-white px-3.5 text-[12px] font-medium text-neutral-900 transition hover:bg-neutral-100 sm:px-4"
               >
-                Solicitar acesso
+                Quero meu acesso
               </Link>
             </nav>
           </div>

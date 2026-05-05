@@ -12,18 +12,13 @@ interface LogoProps {
  */
 export default function Logo({ className, invert = true }: LogoProps) {
   return (
-    <img
-      src={logoSrc}
-      alt="RZ Trader Studio"
-      width={1536}
-      height={1024}
-      loading="lazy"
-      decoding="async"
+    <span
       className={cn(
-        "h-5 w-auto select-none object-contain sm:h-6",
-        invert && "invert",
+        "text-lg sm:text-xl font-bold tracking-tight whitespace-nowrap",
         className,
       )}
-    />
+    >
+      RZ STUDIO
+    </span>
   );
 }

@@ -11,6 +11,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Home from "./pages/app/Home";
 import Carteira from "./pages/app/Carteira";
 import Agenda from "./pages/app/Agenda";
@@ -41,6 +43,8 @@ const App = () => (
             <Route path="/signup" element={<Signup />} />
             <Route path="/privacidade" element={<Privacy />} />
             <Route path="/termos" element={<Terms />} />
+            <Route path="/recuperar-senha" element={<ForgotPassword />} />
+            <Route path="/atualizar-senha" element={<ResetPassword />} />
 
             <Route
               path="/app"

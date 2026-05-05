@@ -108,6 +108,11 @@ export default function Login() {
                   placeholder="••••••••"
                   className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 text-base text-white placeholder:text-white/25 outline-none transition focus:border-amber-300/40 focus:bg-black/50"
                 />
+                <div className="mt-2 flex justify-end">
+                  <Link to="/recuperar-senha" className="text-[11px] text-white/50 transition hover:text-white">
+                    Esqueceu sua senha?
+                  </Link>
+                </div>
               </div>
 
               <button

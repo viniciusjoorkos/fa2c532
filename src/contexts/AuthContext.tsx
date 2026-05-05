@@ -11,7 +11,9 @@ interface AuthContextValue {
   signup: (name: string, email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateProfile: (patch: { name?: string; avatar_url?: string | null }) => Promise<{ ok: boolean; error?: string }>;
+  updateProfile: (patch: { name?: string; avatar_url?: string | null }) => Promise<{ ok: boolean; error?: string }>;
   updatePassword: (newPassword: string) => Promise<{ ok: boolean; error?: string }>;
+  resetPassword: (email: string) => Promise<{ ok: boolean; error?: string }>;
   refreshUser: () => Promise<void>;
   isAdmin: boolean;
   isPremium: boolean;
@@ -119,6 +121,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { ok: true };
   };
 
+  const resetPassword: AuthContextValue["resetPassword"] = async (email) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/atualizar-senha`,
+      });
+      if (error) throw error;
+      return { ok: true };
+    } catch (e: any) {
+      return { ok: false, error: e.message };
+    }
+  };
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -129,6 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       updateProfile,
       updatePassword,
+      resetPassword,
       refreshUser,
       isAdmin: user?.role === "admin",
       isPremium: user?.plan === "premium" || user?.plan === "pro" || user?.plan === "gold" || user?.role === "admin",

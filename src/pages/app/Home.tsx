@@ -16,44 +16,54 @@ import { ChatWidget } from "@/components/ChatWidget";
 import type { Carteira, Convite, Live, Sessao } from "@/types";
 import { useLiveCountdown } from "@/hooks/useLiveCountdown";
 
-function LiveCardContent({ live }: { live: Live }) {
-  const { countdown, canEnter, isLive, waitingLink } = useLiveCountdown(live.data, live.status, live.link);
-  return (
-    <div className="flex flex-1 flex-col">
-      <p className="text-base font-bold leading-tight sm:text-lg">{live.titulo}</p>
-      <p className="mt-1 text-xs text-muted-foreground">{formatDate(live.data)}</p>
-      {live.is_premium && (
-        <Badge className="mt-2 w-fit border-primary/40 bg-primary/10 text-primary" variant="outline">
-          <Crown className="mr-1 h-3 w-3" /> Premium
-        </Badge>
-      )}
+/** Badge de plano da live */
+function LivePlanBadge({ live }: { live: Live }) {
+  // Se tem plan_access definido, usa o primeiro; senão usa is_premium
+  const plans = live.plan_access ?? [];
+  if (plans.includes("gold")) return <Badge className="w-fit text-[10px] border-amber-400/40 bg-amber-400/10 text-amber-400" variant="outline">GOLD</Badge>;
+  if (plans.includes("pro")) return <Badge className="w-fit text-[10px] border-foreground/40 bg-foreground/10 text-foreground" variant="outline">PRO</Badge>;
+  if (live.is_premium || plans.includes("premium")) return <Badge className="w-fit text-[10px] border-primary/40 bg-primary/10 text-primary" variant="outline"><Crown className="mr-1 h-3 w-3" />Premium</Badge>;
+  return <Badge className="w-fit text-[10px] border-emerald-500/40 bg-emerald-500/10 text-emerald-500" variant="outline">FREE</Badge>;
+}
 
-      <div className="mt-auto pt-3">
-        {isLive && live.link ? (
+/** Card compacto de live para a lista */
+function LiveRow({ live }: { live: Live }) {
+  const { countdown, canEnter, isLive, waitingLink } = useLiveCountdown(live.data, live.status, live.link);
+  const hasLink = !!live.link && live.link.trim() !== "";
+
+  return (
+    <div className="flex items-center gap-3 py-3 border-b border-border last:border-b-0">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold leading-tight truncate">{live.titulo}</p>
+        <div className="mt-1 flex items-center gap-2">
+          <span className="text-[11px] text-muted-foreground">{formatDate(live.data)}</span>
+          <LivePlanBadge live={live} />
+        </div>
+      </div>
+      <div className="shrink-0">
+        {isLive && hasLink ? (
           <a href={live.link} target="_blank" rel="noreferrer">
-            <Button className="w-full bg-primary text-primary-foreground hover:opacity-90 animate-pulse-glow">
-              <span className="dot-online mr-2" /> Entrar na Live
+            <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 animate-pulse-glow">
+              <span className="dot-online mr-1.5" /> Ao Vivo
             </Button>
           </a>
-        ) : canEnter && live.link ? (
+        ) : canEnter && hasLink ? (
           <a href={live.link} target="_blank" rel="noreferrer">
-            <Button className="w-full bg-primary text-primary-foreground hover:opacity-90">
-              Entrar na Live
+            <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90">
+              Entrar
             </Button>
           </a>
         ) : waitingLink ? (
-          <div className="rounded-lg border border-border bg-card p-3 text-center text-xs text-muted-foreground">
-            Link será disponibilizado em breve
-          </div>
+          <Button size="sm" variant="outline" disabled className="text-[11px]">
+            Link em breve
+          </Button>
         ) : countdown ? (
-          <div className="flex flex-col items-center gap-1.5 rounded-lg border border-border bg-card p-3">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Clock className="h-3.5 w-3.5" /> Começa em
-            </div>
-            <p className="font-mono text-lg font-bold tracking-wider">{countdown}</p>
+          <div className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5">
+            <Clock className="h-3 w-3 text-muted-foreground" />
+            <span className="font-mono text-xs font-bold tracking-wider">{countdown}</span>
           </div>
         ) : (
-          <Button className="w-full" variant="outline" disabled>Live finalizada</Button>
+          <Button size="sm" variant="outline" disabled className="text-[11px]">Finalizada</Button>
         )}
       </div>
     </div>
@@ -66,7 +76,7 @@ export default function Home() {
   const [carteira, setCarteira] = useState<Carteira | null>(null);
   const [sessoes, setSessoes] = useState<Sessao[]>([]);
   const [convite, setConvite] = useState<Convite>({ user_id: "", quantidade: 0 });
-  const [proximaLive, setProximaLive] = useState<Live | null>(null);
+  const [proximasLives, setProximasLives] = useState<Live[]>([]);
   const [expertOnline, setExpertOnline] = useState(false);
 
   useEffect(() => {
@@ -82,9 +92,10 @@ export default function Home() {
       setCarteira(c);
       setSessoes(s);
       setConvite(cv);
-      setProximaLive(ups[0] ?? null);
+      setProximasLives(ups.slice(0, 5));
       setExpertOnline(on);
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isPremium]);
 
   const ultimoResultado = sessoes[0]?.resultado ?? 0;
@@ -205,21 +216,25 @@ export default function Home() {
           <BancaChart sessoes={sessoes} bancaInicial={carteira?.banca_inicial ?? 0} />
         </div>
 
-        <div className="glass-card flex flex-col gap-4 rounded-xl p-4 sm:p-5">
+        <div className="glass-card flex flex-col gap-2 rounded-xl p-4 sm:p-5">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Próxima live</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Próximas Lives</h3>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </div>
 
-          {proximaLive ? (
-            <LiveCardContent live={proximaLive} />
+          {proximasLives.length > 0 ? (
+            <div className="flex flex-col">
+              {proximasLives.map((live) => (
+                <LiveRow key={live.id} live={live} />
+              ))}
+            </div>
           ) : (
-            <div className="flex flex-1 items-center justify-center text-center text-sm text-muted-foreground">
+            <div className="flex flex-1 items-center justify-center text-center text-sm text-muted-foreground py-6">
               Nenhuma live agendada
             </div>
           )}
 
-          <Link to="/app/agenda" className="text-center text-xs font-medium text-primary hover:underline">
+          <Link to="/app/agenda" className="text-center text-xs font-medium text-primary hover:underline mt-1">
             Ver agenda completa →
           </Link>
         </div>

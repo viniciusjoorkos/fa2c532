@@ -226,6 +226,9 @@ export default function DashboardLayout() {
                 <DropdownMenuItem onClick={() => navigate("/app/perfil")}>
                   <UserIcon className="mr-2 h-4 w-4" /> Perfil
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/app/instrucoes")}>
+                  <BookOpen className="mr-2 h-4 w-4" /> Instruções
+                </DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem onClick={() => navigate("/app/admin")}>
                     <Shield className="mr-2 h-4 w-4" /> Painel Admin
