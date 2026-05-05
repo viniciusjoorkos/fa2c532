@@ -261,15 +261,12 @@ export default function Landing() {
           mp4Src="/hero/minha-narrativa-1.mp4"
           webmSrc="/hero/minha-narrativa-1.webm"
           posterSrc="/hero/minha-narrativa-1-poster.jpg"
-          className="absolute inset-0 h-full w-full"
+          className="absolute inset-0 z-[1] h-full w-full"
           objectFit="cover"
-          scrollRangeMultiplier={1.8}
-          startFromBottom={false}
+          isHero
         />
 
-        {/* Cinematic overlays for text legibility */}
-        <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-b from-black/50 via-transparent to-black/70" />
-        <div className="pointer-events-none absolute inset-0 z-[3] bg-[radial-gradient(60%_40%_at_50%_30%,transparent,rgba(0,0,0,0.4)_100%)]" />
+        {/* No additional overlays — the cinematic video is already dark enough for white text legibility */}
 
         {/* fade to white at bottom */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[4] h-40 bg-gradient-to-b from-transparent via-[#050505]/60 to-white" />
