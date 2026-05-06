@@ -282,7 +282,7 @@ export default function Landing() {
                 className="inline-flex h-8 items-center rounded-full bg-white px-3.5 text-[12px] font-medium text-neutral-900 transition hover:bg-neutral-100 sm:px-4"
               >
                 Quero meu acesso
-              </a>>
+              </a>
             </nav>
           </div>
         </header>
