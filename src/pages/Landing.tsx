@@ -299,11 +299,13 @@ export default function Landing() {
           <h1 className="font-serif text-[48px] font-bold leading-[1] tracking-tight text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.6)] sm:text-[72px] lg:text-[96px]">
             REZENDE
             <br />
-            <span className="bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">MEET</span>
+            <span className="bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">#FALHAEFALHA</span>
           </h1>
 
           <p className="mt-4 max-w-lg text-[14px] font-light leading-relaxed tracking-wide text-white/70 drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] sm:mt-6 sm:text-[16px] lg:text-[18px]" style={{ fontWeight: 300 }}>
-            Entre no free ou no vip só entre e vamos para o topo
+            Entre no free ou no vip
+            <br />
+            Te espero dentro da RZ STUDIO.
           </p>
 
           {/* Subtle scroll indicator */}
