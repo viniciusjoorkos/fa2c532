@@ -7,10 +7,14 @@ import {
   TrendingUp,
   Target,
   LineChart,
+  Zap,
+  CheckCircle2,
+  Star,
 } from "lucide-react";
+import * as PricingCard from '@/components/ui/pricing-card';
+import { Button } from '@/components/ui/button';
 import SmokeBackdrop from "@/components/home/SmokeBackdrop";
-import FeaturesSection from "@/components/home/FeaturesSection";
-import ScrollVideo from "@/components/home/ScrollVideo";
+import TestimonialsSection from "@/components/home/TestimonialsSection";
 import Logo from "@/components/Logo";
 import timelineImg from "@/assets/student-timeline.jpg";
 import lanhouseImg from "@/assets/lanhouse-rezende.jpg";
@@ -57,73 +61,84 @@ function PricingSection() {
     {
       id: "free",
       name: "Free",
+      icon: <Zap className="text-muted-foreground" />,
       price: "Grátis",
-      sub: "Sem cartão de crédito",
+      sub: "comece sem risco",
+      desc: "Perfeito pra quem quer entrar no jogo e entender o método.",
       highlight: false,
       badge: null,
       features: [
-        "Acesso a todas as lives Free",
-        "Dashboard completo de carteira",
-        "Registro de sessões ilimitado",
-        "Ranking e histórico pessoal",
+        "7 lives por semana",
+        "Acesso às lives abertas",
+        "Controle e histórico da sua evolução",
+        "Ranking e sistema de progresso",
         "Indicações e recompensas",
       ],
-      cta: freePlanOpen ? "Criar conta grátis" : null,
+      extraMsg: "Entre no mercado sem pagar nada",
+      cta: freePlanOpen ? "Começar grátis" : null,
       ctaHref: freePlanOpen ? "/signup?plan=free" : null,
       ctaMsg: freePlanOpen ? null : closedMsg,
     },
     {
       id: "premium",
       name: "Premium",
+      icon: <ShieldCheck className="text-muted-foreground" />,
       price: "R$ 27",
-      sub: "por mês",
+      sub: "mais leitura, mais precisão",
+      desc: "Aqui você sai do básico e começa a enxergar o mercado com vantagem.",
       highlight: false,
       badge: null,
       features: [
         "Tudo do plano Free",
-        "Lives Premium exclusivas",
-        "Análises e setups ao vivo",
-        "Sala fechada com Rezende",
-        "Suporte prioritário",
+        "+1 live extra por semana (8 no total)",
+        "Lives exclusivas com análises mais profundas",
+        "Setups explicados ao vivo",
+        "Acesso à sala fechada",
       ],
-      cta: "Assinar Premium",
+      extraMsg: "Menos achismo. Mais leitura de mercado.",
+      cta: "Evoluir para Premium",
       ctaHref: "/signup?plan=premium",
     },
     {
       id: "pro",
       name: "PRO",
+      icon: <TrendingUp className="text-muted-foreground" />,
       price: "R$ 146",
-      sub: "por mês",
+      sub: "nível de quem leva isso a sério",
+      desc: "Esse plano não é pra testar. É pra quem quer resultado.",
       highlight: true,
       badge: "Mais popular",
       features: [
-        "Tudo do plano Premium",
-        "Lives PRO com entrada ao vivo",
+        "Tudo do Premium",
+        "+1 live extra (9 no total)",
+        "+1 live PRO exclusiva (conteúdo avançado)",
         "Mentoria individual mensal",
-        "Acesso ao histórico completo de lives",
-        "Candidatura ao plano Gold",
+        "Acesso ao histórico completo",
+        "Prioridade total no suporte",
+        "Caminho para o plano Gold",
       ],
-      cta: "Assinar PRO",
+      extraMsg: "Você não assiste o mercado. Você aprende a dominar.",
+      cta: "Virar PRO",
       ctaHref: "/signup?plan=pro",
     },
     {
       id: "gold",
       name: "GOLD",
+      icon: <Star className="text-muted-foreground" />,
       price: "Exclusivo",
-      sub: "Por mérito, não por compra",
+      sub: "acesso por mérito",
+      desc: "Não está à venda. Aqui entram apenas os que provaram resultado.",
       highlight: false,
       badge: "✦ Não está à venda",
       features: [
         "Tudo do plano PRO",
-        "Acesso à página Gold exclusiva",
-        "Reconhecimento no ranking público",
-        "Badge Gold no perfil",
-        "Sessões privadas com Rezende",
+        "Ambiente fechado com os melhores",
+        "Acesso direto e estratégico",
       ],
       cta: null,
-      goldNote: "Para conquistar o plano Gold, você precisa estar entre o Top 5 do ranking de desempenho do RZ Studio. Faça seu cadastro no plano Free, Premium ou PRO e se candidate com seus resultados.",
+      extraMsg: "Não é sobre pagar. É sobre merecer.",
     },
-  ] as const;
+  ];
 
   return (
     <section id="planos" className="relative bg-white py-24 sm:py-32">
@@ -132,7 +147,7 @@ function PricingSection() {
         <div className="text-center">
           <p className="font-mono text-[10px] uppercase tracking-[0.45em] text-neutral-400">Planos</p>
           <h2 className="mt-3 font-serif text-3xl font-light leading-tight tracking-tight text-neutral-900 sm:text-5xl">
-            Escolha seu patamar.
+            Escolha seu plano.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-[14px] leading-relaxed text-neutral-500">
             Comece de graça e evolua conforme seus resultados. O plano Gold não está à venda — ele é conquistado.
@@ -145,92 +160,77 @@ function PricingSection() {
             const isGold = plan.id === "gold";
             const isPro = plan.id === "pro";
             return (
-              <div
-                key={plan.id}
-                className={`relative flex flex-col rounded-2xl border p-6 transition ${
-                  isGold
-                    ? "border-yellow-200 bg-gradient-to-b from-yellow-50/80 to-white"
-                    : isPro
-                    ? "border-neutral-900 bg-neutral-950 text-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]"
-                    : "border-neutral-200 bg-white"
-                }`}
-              >
-                {/* badge */}
-                {plan.badge && (
-                  <div className={`mb-4 w-fit rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
-                    isGold
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-white/10 text-white/70"
-                  }`}>
-                    {plan.badge}
-                  </div>
-                )}
+              <PricingCard.Card key={plan.id} className={`flex flex-col w-full max-w-none ${isPro ? "border-neutral-900 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] bg-neutral-950 text-white" : ""} ${isGold ? "border-yellow-200 bg-gradient-to-b from-yellow-50/80 to-white" : ""}`}>
+                <PricingCard.Header className={isPro ? "bg-neutral-900/50" : isGold ? "bg-yellow-100/30" : ""}>
+                  <PricingCard.Plan>
+                    <PricingCard.PlanName className={isPro ? "text-white/60" : isGold ? "text-yellow-600" : ""}>
+                      {plan.icon}
+                      <span className="uppercase tracking-widest">{plan.name}</span>
+                    </PricingCard.PlanName>
+                    {plan.badge && (
+                      <PricingCard.Badge className={isPro ? "bg-white/10 text-white/70 border-white/20" : isGold ? "bg-yellow-100 text-yellow-700 border-yellow-300" : ""}>
+                        {plan.badge}
+                      </PricingCard.Badge>
+                    )}
+                  </PricingCard.Plan>
+                  <PricingCard.Price>
+                    <PricingCard.MainPrice className={isGold ? "bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent" : isPro ? "text-white" : ""}>
+                      {plan.price}
+                    </PricingCard.MainPrice>
+                  </PricingCard.Price>
+                  <PricingCard.Period className={isPro ? "text-white/40" : ""}>{plan.sub}</PricingCard.Period>
 
-                {/* plan name */}
-                <p className={`text-xs font-semibold uppercase tracking-widest ${
-                  isGold ? "text-yellow-600" : isPro ? "text-white/50" : "text-neutral-400"
-                }`}>
-                  {plan.name}
-                </p>
-
-                {/* price */}
-                <p className={`mt-2 text-3xl font-bold tracking-tight ${
-                  isGold ? "bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent"
-                  : isPro ? "text-white"
-                  : "text-neutral-900"
-                }`}>
-                  {plan.price}
-                </p>
-                <p className={`mt-0.5 text-[11px] ${isPro ? "text-white/40" : "text-neutral-400"}`}>
-                  {plan.sub}
-                </p>
-
-                {/* divider */}
-                <div className={`my-5 h-px ${isGold ? "bg-yellow-200" : isPro ? "bg-white/10" : "bg-neutral-100"}`} />
-
-                {/* features */}
-                <ul className="flex flex-col gap-2.5">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5">
-                      <span className={`mt-0.5 text-xs ${isGold ? "text-yellow-500" : isPro ? "text-emerald-400" : "text-emerald-500"}`}>✓</span>
-                      <span className={`text-[12.5px] leading-snug ${isPro ? "text-white/80" : "text-neutral-600"}`}>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* gold note */}
-                {"goldNote" in plan && plan.goldNote && (
-                  <p className="mt-5 rounded-xl border border-yellow-200 bg-yellow-50 p-3 text-[11px] leading-relaxed text-yellow-700">
-                    {plan.goldNote}
-                  </p>
-                )}
-
-                {/* cta */}
-                <div className="mt-auto pt-6">
-                  {"ctaMsg" in plan && plan.ctaMsg ? (
-                    <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-center text-[11px] text-neutral-500">
+                  {plan.cta && plan.ctaHref ? (
+                    <Button
+                      asChild
+                      variant={isPro ? "default" : "outline"}
+                      className={`w-full mt-4 font-semibold ${isPro ? "bg-white text-neutral-900 hover:bg-neutral-100" : isGold ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : ""}`}
+                    >
+                      <Link to={plan.ctaHref}>{plan.cta}</Link>
+                    </Button>
+                  ) : "ctaMsg" in plan && plan.ctaMsg ? (
+                    <div className="w-full mt-4 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-2 text-center text-[11px] text-neutral-500">
                       {plan.ctaMsg}
                     </div>
-                  ) : plan.cta && plan.ctaHref ? (
-                    <Link
-                      to={plan.ctaHref}
-                      className={`flex h-10 w-full items-center justify-center rounded-full text-[13px] font-medium transition ${
-                        isPro
-                          ? "bg-white text-neutral-900 hover:bg-neutral-100"
-                          : isGold
-                          ? "border border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
-                          : "border border-neutral-200 bg-white text-neutral-900 hover:border-neutral-400"
-                      }`}
-                    >
-                      {plan.cta}
-                    </Link>
                   ) : !isGold ? (
-                    <div className="flex h-10 items-center justify-center rounded-full border border-neutral-100 bg-neutral-50 text-[12px] text-neutral-400">
+                    <Button disabled variant="outline" className="w-full mt-4">
                       Em breve
-                    </div>
+                    </Button>
                   ) : null}
-                </div>
-              </div>
+                </PricingCard.Header>
+
+                <PricingCard.Body className="flex-1 flex flex-col">
+                  {plan.desc && (
+                    <PricingCard.Description className={isPro ? "text-white/60 text-[12px]" : "text-[12px]"}>
+                      {plan.desc}
+                    </PricingCard.Description>
+                  )}
+                  <PricingCard.List className="mt-4 flex-1">
+                    {plan.features.map((item) => (
+                      <PricingCard.ListItem key={item} className={isPro ? "text-white/80" : ""}>
+                        <CheckCircle2
+                          className={isGold ? "text-yellow-500 w-4 h-4" : isPro ? "text-emerald-400 w-4 h-4" : "text-emerald-500 w-4 h-4"}
+                          aria-hidden="true"
+                        />
+                        <span>{item}</span>
+                      </PricingCard.ListItem>
+                    ))}
+                  </PricingCard.List>
+
+                  {/* extra message / note */}
+                  {"extraMsg" in plan && plan.extraMsg && (
+                    <div className={`mt-6 rounded-xl border p-3 text-[11px] leading-relaxed ${
+                      isGold
+                        ? "border-yellow-200 bg-yellow-50 text-yellow-700"
+                        : isPro
+                        ? "border-white/10 bg-white/5 text-white/70"
+                        : "border-neutral-100 bg-neutral-50 text-neutral-600"
+                    }`}>
+                      {plan.extraMsg}
+                    </div>
+                  )}
+                </PricingCard.Body>
+              </PricingCard.Card>
             );
           })}
         </div>
@@ -255,16 +255,6 @@ export default function Landing() {
     <div className="min-h-screen bg-white text-neutral-900 antialiased selection:bg-amber-200/70">
       {/* HERO — full-bleed scroll-driven video */}
       <section className="relative isolate overflow-hidden bg-[#050505] text-white" style={{ minHeight: '100vh' }}>
-        {/* Scroll-driven video background */}
-        <ScrollVideo
-          mp4Src="/hero/minha-narrativa-5.mp4"
-          webmSrc="/hero/minha-narrativa-5.webm"
-          posterSrc="/hero/minha-narrativa-5-poster.jpg"
-          className="absolute inset-0 z-[1] h-full w-full"
-          objectFit="cover"
-          isHero
-        />
-
         {/* No additional overlays — the cinematic video is already dark enough for white text legibility */}
 
         {/* fade to white at bottom */}
@@ -283,12 +273,16 @@ export default function Landing() {
               >
                 LOGIN
               </Link>
-              <Link
-                to="/signup"
+              <a
+                href="#planos"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="inline-flex h-8 items-center rounded-full bg-white px-3.5 text-[12px] font-medium text-neutral-900 transition hover:bg-neutral-100 sm:px-4"
               >
                 Quero meu acesso
-              </Link>
+              </a>>
             </nav>
           </div>
         </header>
@@ -307,10 +301,9 @@ export default function Landing() {
             Te espero dentro da RZ STUDIO.
           </p>
 
-          {/* Subtle scroll indicator */}
-          <div className="mt-12 flex flex-col items-center gap-2 animate-bounce sm:mt-16">
-            <span className="text-[9px] uppercase tracking-[0.4em] text-white/30">Scroll</span>
-            <div className="h-8 w-px bg-gradient-to-b from-white/40 to-transparent" />
+          {/* VTurb Hero Video */}
+          <div className="mt-8 sm:mt-12 w-full max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+            <div dangerouslySetInnerHTML={{ __html: `<vturb-smartplayer id="vid-69fadd77ce8c536e45bf5317" style="display: block; margin: 0 auto; width: 100%; "></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/512f6166-0536-4361-9189-645ba6587dff/players/69fadd77ce8c536e45bf5317/v4/player.js", s.async=!0,document.head.appendChild(s); </script>` }} />
           </div>
         </div>
       </section>
@@ -379,6 +372,10 @@ export default function Landing() {
                 className="block h-auto w-full object-contain"
               />
             </div>
+            {/* VTurb Video 2 */}
+            <div className="relative mt-8 w-full max-w-[400px] mx-auto overflow-hidden rounded-xl shadow-2xl">
+              <div dangerouslySetInnerHTML={{ __html: `<vturb-smartplayer id="vid-69fad2b51876a88a5720ae39" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/512f6166-0536-4361-9189-645ba6587dff/players/69fad2b51876a88a5720ae39/v4/player.js", s.async=!0,document.head.appendChild(s); </script>` }} />
+            </div>
             {/* Premium badge — destaque, sem bolinha amarela */}
             <div className="absolute -top-3 left-6 z-20 inline-flex items-center gap-2 rounded-md border border-neutral-900/90 bg-neutral-900 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.32em] text-amber-300 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]">
               <span className="font-mono text-amber-400">01</span>
@@ -425,8 +422,8 @@ export default function Landing() {
           {/* Heading row — editorial */}
           <div className="grid items-end gap-8 sm:grid-cols-12">
             <div className="sm:col-span-7">
-              <p className="font-mono text-[10px] uppercase tracking-[0.45em] text-amber-700/80">
-                <span className="mr-3 text-neutral-400">/ 03</span>O essencial
+              <p className="font-mono text-[10px] uppercase tracking-[0.45em] text-neutral-500">
+                O essencial
               </p>
               <h2 className="mt-5 font-serif text-[34px] font-light leading-[1.05] tracking-tight text-neutral-900 sm:text-5xl">
                 Tudo que você precisa.
@@ -529,16 +526,16 @@ export default function Landing() {
         <section className="relative z-10 mt-8">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="relative overflow-hidden rounded-[2rem] bg-[#0A0A0A] text-white shadow-[0_60px_120px_-40px_rgba(0,0,0,0.6)] ring-1 ring-white/5">
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_50%_at_20%_30%,rgba(212,175,55,0.12),transparent_70%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(40%_50%_at_20%_30%,rgba(6,182,212,0.12),transparent_70%)]" />
               <div className="relative grid items-center gap-10 px-6 py-20 sm:px-10 lg:grid-cols-12 lg:gap-14 lg:py-28">
                 <div className="relative lg:col-span-5">
                   {/* Premium ambient glow loop */}
                   <div aria-hidden className="pointer-events-none absolute -inset-10 -z-10 overflow-hidden rounded-[2.5rem]">
-                    <div className="absolute inset-0 rounded-[2.5rem] bg-[radial-gradient(60%_60%_at_50%_50%,rgba(212,175,55,0.22),transparent_70%)] blur-3xl animate-premium-pulse" />
-                    <div className="absolute -inset-[40%] rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(212,175,55,0.18)_60deg,transparent_140deg,transparent_360deg)] blur-2xl animate-premium-spin" />
-                    <div className="absolute inset-0 rounded-[2.5rem] bg-[radial-gradient(40%_40%_at_80%_20%,rgba(255,210,120,0.18),transparent_60%)] blur-2xl animate-premium-glow-b" />
+                    <div className="absolute inset-0 rounded-[2.5rem] bg-[radial-gradient(60%_60%_at_50%_50%,rgba(6,182,212,0.22),transparent_70%)] blur-3xl animate-premium-pulse" />
+                    <div className="absolute -inset-[40%] rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(6,182,212,0.18)_60deg,transparent_140deg,transparent_360deg)] blur-2xl animate-premium-spin" />
+                    <div className="absolute inset-0 rounded-[2.5rem] bg-[radial-gradient(40%_40%_at_80%_20%,rgba(56,189,248,0.18),transparent_60%)] blur-2xl animate-premium-glow-b" />
                   </div>
-                  <div className="relative overflow-hidden rounded-2xl ring-1 ring-amber-300/15 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.7)]">
+                  <div className="relative overflow-hidden rounded-2xl ring-1 ring-cyan-400/15 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.7)]">
                     <img
                       src="/motivos/rezende-siteoficial.JPG"
                       alt="Rezende Trader Studio — sala premium"
@@ -550,32 +547,32 @@ export default function Landing() {
                     {/* Orb / Smoke animation overlay */}
                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
                       <div className="absolute h-[150%] w-[150%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_50%)] animate-premium-spin blur-3xl opacity-60" />
-                      <div className="absolute h-[120%] w-[120%] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.1)_0%,transparent_60%)] animate-pulse blur-2xl opacity-70 mix-blend-screen" />
+                      <div className="absolute h-[120%] w-[120%] bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.1)_0%,transparent_60%)] animate-pulse blur-2xl opacity-70 mix-blend-screen" />
                     </div>
                     {/* Centered Text */}
                     <div className="absolute inset-0 flex items-center justify-center text-center p-4">
                       <h3 className="font-serif text-2xl font-semibold tracking-wide text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] sm:text-4xl">
                         ESTOU TE ESPERANDO <br />
-                        <span className="text-amber-300">DENTRO DO GRUPO</span>
+                        <span className="text-cyan-400">DENTRO DO GRUPO</span>
                       </h3>
                     </div>
                     {/* Subtle sheen sweep */}
-                    <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,rgba(255,220,150,0.10)_50%,transparent_70%)] bg-[length:250%_100%] animate-premium-sheen" />
+                    <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,rgba(165,243,252,0.10)_50%,transparent_70%)] bg-[length:250%_100%] animate-premium-sheen" />
                     <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   </div>
-                  {/* Premium badge — destaque, sem bolinha amarela */}
-                  <div className="absolute -top-3 left-6 inline-flex items-center gap-2 rounded-md border border-amber-300/40 bg-gradient-to-b from-amber-300 to-amber-500 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.32em] text-neutral-900 shadow-[0_8px_24px_-8px_rgba(212,175,55,0.6)]">
+                  {/* Premium badge — destaque, azul cyan */}
+                  <div className="absolute -top-3 left-6 inline-flex items-center gap-2 rounded-md border border-cyan-400/40 bg-gradient-to-b from-cyan-400 to-blue-500 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.32em] text-white shadow-[0_8px_24px_-8px_rgba(6,182,212,0.6)]">
                     <span className="font-mono">02</span>
-                    <span className="h-3 w-px bg-neutral-900/30" />
+                    <span className="h-3 w-px bg-white/30" />
                     <span>PREMIUM</span>
                   </div>
                 </div>
 
                 <div className="lg:col-span-7">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-amber-300/80">Lives Premium</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-cyan-400/80">Lives Premium</p>
                   <h2 className="mt-3 font-serif text-3xl font-light leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl">
                     Sala fechada. <br />
-                    <span className="italic text-amber-300">Decisões em segundos.</span>
+                    <span className="italic text-cyan-400">Decisões em segundos.</span>
                   </h2>
                   <p className="mt-5 max-w-md text-[14px] leading-relaxed text-white/55">
                     Leitura de fluxo ao vivo, gestão de risco, expiração e entrada
@@ -590,20 +587,24 @@ export default function Landing() {
                       { i: Trophy, t: "Replays exclusivos das sessões" },
                     ].map((i) => (
                       <li key={i.t} className="flex items-center gap-3">
-                        <i.i className="h-3.5 w-3.5 text-amber-300/80" strokeWidth={1.5} />
+                        <i.i className="h-3.5 w-3.5 text-cyan-400/80" strokeWidth={1.5} />
                         {i.t}
                       </li>
                     ))}
                   </ul>
 
                   <div className="mt-8 flex flex-wrap items-center gap-3">
-                    <Link
-                      to="/signup"
+                    <a
+                      href="#planos"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
                       className="group inline-flex h-10 items-center gap-1.5 rounded-full bg-white px-5 text-[13px] font-medium text-neutral-900 transition hover:bg-neutral-100"
                     >
                       Garantir minha vaga
                       <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
-                    </Link>
+                    </a>
                     <span className="text-[10px] uppercase tracking-[0.28em] text-white/30">
                       Apenas por convite
                     </span>
@@ -616,6 +617,9 @@ export default function Landing() {
 
         {/* PRICING SECTION */}
         <PricingSection />
+
+        {/* TESTIMONIALS SECTION */}
+        <TestimonialsSection />
 
         {/* FINAL CTA & FOOTER WRAPPER */}
         <div className="relative w-full overflow-hidden bg-black text-white/90">
