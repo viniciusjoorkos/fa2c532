@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 export default function SiteAssetsTab() {
   const [freePlanOpen, setFreePlanOpen] = useState(true);
+  const [walletSessionOpen, setWalletSessionOpen] = useState(false);
   const [closedMsg, setClosedMsg] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -18,8 +19,10 @@ export default function SiteAssetsTab() {
       try {
         const all = await siteSettingsApi.getAll();
         const fp = all.find((s) => s.key === "free_plan_open");
+        const wp = all.find((s) => s.key === "wallet_session_open");
         const msg = all.find((s) => s.key === "free_plan_closed_msg");
         setFreePlanOpen(fp?.value !== "false");
+        setWalletSessionOpen(wp?.value === "true");
         setClosedMsg(msg?.value ?? "Estamos sem vagas no momento. Tente novamente em breve.");
       } finally {
         setLoading(false);
@@ -32,6 +35,7 @@ export default function SiteAssetsTab() {
     try {
       await Promise.all([
         siteSettingsApi.set("free_plan_open", freePlanOpen ? "true" : "false"),
+        siteSettingsApi.set("wallet_session_open", walletSessionOpen ? "true" : "false"),
         siteSettingsApi.set("free_plan_closed_msg", closedMsg),
       ]);
       toast.success("Configurações salvas");
@@ -46,6 +50,29 @@ export default function SiteAssetsTab() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Wallet Session Toggle */}
+      <div className="glass-card rounded-xl p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <ToggleLeft className="h-5 w-5 text-primary" />
+          <h3 className="text-sm font-semibold">Controle de Sessão na Carteira</h3>
+        </div>
+
+        <div className="flex items-center justify-between rounded-lg border border-border bg-background/30 p-4">
+          <div>
+            <Label className="text-sm font-medium">Liberação de Nova Sessão</Label>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Quando ativado, os usuários poderão registrar novas sessões na aba "Minha Carteira".
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className={`text-xs font-semibold ${walletSessionOpen ? "text-primary" : "text-destructive"}`}>
+              {walletSessionOpen ? "LIBERADO" : "BLOQUEADO"}
+            </span>
+            <Switch checked={walletSessionOpen} onCheckedChange={setWalletSessionOpen} />
+          </div>
+        </div>
+      </div>
+
       {/* Free Plan Toggle */}
       <div className="glass-card rounded-xl p-5">
         <div className="flex items-center gap-3 mb-4">

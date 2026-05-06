@@ -13,8 +13,7 @@ import { Wallet, TrendingUp, TrendingDown, Plus, Lock, Loader2 } from "lucide-re
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import type { Carteira, Sessao } from "@/types";
-import { useLiveCountdown } from "@/hooks/useLiveCountdown";
-import { livesApi } from "@/services/api";
+import { siteSettingsApi } from "@/services/siteSettingsApi";
 
 const FREE_LIMIT = 5;
 
@@ -23,9 +22,7 @@ export default function Carteira() {
   const [carteira, setCarteira] = useState<Carteira | null>(null);
   const [sessoes, setSessoes] = useState<Sessao[]>([]);
   const [loading, setLoading] = useState(true);
-  const [proximaLive, setProximaLive] = useState<any>(null);
-
-  const { isLiveActive } = useLiveCountdown(proximaLive?.data);
+  const [isWalletOpen, setIsWalletOpen] = useState(false);
 
   const [bancaInicial, setBancaInicial] = useState("");
   const [openSession, setOpenSession] = useState(false);
@@ -40,14 +37,14 @@ export default function Carteira() {
     if (!user) return;
     setLoading(true);
     try {
-      const [c, s, lives] = await Promise.all([
+      const [c, s, isOpen] = await Promise.all([
         carteiraApi.byUser(user.id), 
         sessoesApi.byUser(user.id),
-        livesApi.list()
+        siteSettingsApi.isWalletSessionOpen()
       ]);
       setCarteira(c);
       setSessoes(s);
-      setProximaLive(lives.filter((l) => l.status === "agendada")[0] ?? null);
+      setIsWalletOpen(isOpen);
     } finally {
       setLoading(false);
     }
@@ -139,8 +136,8 @@ export default function Carteira() {
 
         <Dialog open={openSession} onOpenChange={setOpenSession}>
           <DialogTrigger asChild>
-            <Button disabled={limiteAtingido || !isLiveActive} className="bg-primary text-primary-foreground hover:opacity-90">
-              {limiteAtingido || !isLiveActive ? <Lock className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}
+            <Button disabled={limiteAtingido || !isWalletOpen} className="bg-primary text-primary-foreground hover:opacity-90">
+              {limiteAtingido || !isWalletOpen ? <Lock className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}
               Nova sessão
             </Button>
           </DialogTrigger>
@@ -167,12 +164,6 @@ export default function Carteira() {
           </DialogContent>
         </Dialog>
       </div>
-
-      {!isLiveActive && !limiteAtingido && (
-        <div className="rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-primary">
-          Essa seção é liberada quando iniciamos a LIVE ou a 10 minutos antes.
-        </div>
-      )}
 
       {limiteAtingido && (
         <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-sm text-warning">

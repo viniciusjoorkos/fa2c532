@@ -17,7 +17,7 @@ import Home from "./pages/app/Home";
 import Carteira from "./pages/app/Carteira";
 import Agenda from "./pages/app/Agenda";
 import Gravadas from "./pages/app/Gravadas";
-import Indique from "./pages/app/Indique";
+import ChatPage from "./pages/app/ChatPage";
 import Depoimentos from "./pages/app/Depoimentos";
 import Perfil from "./pages/app/Perfil";
 import Admin from "./pages/app/Admin";
@@ -59,7 +59,7 @@ const App = () => (
               <Route path="agenda" element={<Agenda />} />
               <Route path="gravadas" element={<Gravadas />} />
               <Route path="premium" element={<Premium />} />
-              <Route path="indique" element={<Indique />} />
+              <Route path="chat" element={<ChatPage />} />
               <Route path="instrucoes" element={<Instrucoes />} />
               <Route path="depoimentos" element={<Depoimentos />} />
               <Route path="perfil" element={<Perfil />} />

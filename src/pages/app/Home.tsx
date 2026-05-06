@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { carteiraApi, convitesApi, expertApi, livesApi, sessoesApi } from "@/services/api";
-import { calcularNivel, formatBRL, formatDate, nivelColor, nivelProgress } from "@/lib/calculations";
+import { calcularNivel, formatBRL, formatDate, nivelColor, nivelProgress, canAccessLive } from "@/lib/calculations";
 import { StatCard } from "@/components/ui/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,9 +27,10 @@ function LivePlanBadge({ live }: { live: Live }) {
 }
 
 /** Card compacto de live para a lista */
-function LiveRow({ live }: { live: Live }) {
+function LiveRow({ live, userPlan }: { live: Live; userPlan: string }) {
   const { countdown, canEnter, isLive, waitingLink } = useLiveCountdown(live.data, live.status, live.link);
   const hasLink = !!live.link && live.link.trim() !== "";
+  const hasAccess = canAccessLive(userPlan, live.plan_access);
 
   return (
     <div className="flex items-center gap-3 py-3 border-b border-border last:border-b-0">
@@ -41,7 +42,11 @@ function LiveRow({ live }: { live: Live }) {
         </div>
       </div>
       <div className="shrink-0">
-        {isLive && hasLink ? (
+        {!hasAccess ? (
+          <Link to="/signup?plan=premium">
+            <Button size="sm" variant="outline" className="text-[11px] border-primary/30 text-primary">Requer Upgrade</Button>
+          </Link>
+        ) : isLive && hasLink ? (
           <a href={live.link} target="_blank" rel="noreferrer">
             <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 animate-pulse-glow">
               <span className="dot-online mr-1.5" /> Ao Vivo
@@ -86,7 +91,7 @@ export default function Home() {
         carteiraApi.byUser(user.id),
         sessoesApi.byUser(user.id),
         convitesApi.byUser(user.id),
-        livesApi.upcoming(isPremium),
+        livesApi.upcoming(),
         expertApi.isOnline(),
       ]);
       setCarteira(c);
@@ -96,7 +101,7 @@ export default function Home() {
       setExpertOnline(on);
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, isPremium]);
+  }, [user]);
 
   const ultimoResultado = sessoes[0]?.resultado ?? 0;
   const tresPerdas = sessoes.length >= 3 && sessoes.slice(0, 3).every((s) => s.resultado < 0);
@@ -225,7 +230,7 @@ export default function Home() {
           {proximasLives.length > 0 ? (
             <div className="flex flex-col">
               {proximasLives.map((live) => (
-                <LiveRow key={live.id} live={live} />
+                <LiveRow key={live.id} live={live} userPlan={user?.plan ?? "free"} />
               ))}
             </div>
           ) : (

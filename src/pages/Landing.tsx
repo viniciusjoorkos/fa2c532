@@ -9,9 +9,8 @@ import {
   LineChart,
 } from "lucide-react";
 import SmokeBackdrop from "@/components/home/SmokeBackdrop";
-import ScrollPiece from "@/components/home/ScrollPiece";
+import FeaturesSection from "@/components/home/FeaturesSection";
 import ScrollVideo from "@/components/home/ScrollVideo";
-import RezendeFloaters from "@/components/home/RezendeFloaters";
 import Logo from "@/components/Logo";
 import timelineImg from "@/assets/student-timeline.jpg";
 import lanhouseImg from "@/assets/lanhouse-rezende.jpg";
@@ -506,21 +505,8 @@ export default function Landing() {
       <div className="relative isolate overflow-hidden bg-white">
         <SmokeBackdrop />
 
-        {/* SCROLL PIECE — golden throne element with parallax lock */}
-        <section className="relative z-10 min-h-[760px] overflow-hidden sm:min-h-[860px]">
-          {/* Floating "Rezende" wordmarks — parallax background, syncs with throne reveal */}
-          <RezendeFloaters />
-          <div className="relative z-10 mx-auto max-w-6xl px-6 pt-20 pb-4 text-center sm:pt-24">
-            <p className="font-mono text-[10px] uppercase tracking-[0.45em] text-amber-700/80">
-              Estratégia
-            </p>
-            <h2 className="mx-auto mt-3 max-w-xl font-serif text-2xl font-light tracking-tight text-neutral-900 sm:text-3xl">
-              Cada movimento.
-              <span className="text-neutral-400"> Calculado.</span>
-            </h2>
-            <ScrollPiece />
-          </div>
-        </section>
+        {/* FEATURES SECTION — glowing dark cards */}
+        <FeaturesSection />
 
         {/* METRICS strip */}
         <section className="relative z-10 border-t border-neutral-200/60">

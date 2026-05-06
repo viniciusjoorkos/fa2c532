@@ -23,7 +23,7 @@ const navItems = [
   { to: "/app/agenda", label: "Agenda de Lives", icon: Calendar },
   { to: "/app/gravadas", label: "Lives Gravadas", icon: Video },
   { to: "/app/carteira", label: "Minha Carteira", icon: Wallet },
-  { to: "/app/indique", label: "Indique e Ganhe", icon: Gift },
+  { to: "/app/chat", label: "Chat", icon: MessageSquare },
   { to: "/app/inbox", label: "Inbox", icon: MessageSquare },
   { to: "/app/depoimentos", label: "Depoimentos", icon: MessageSquare },
   { to: "/app/instrucoes", label: "Instruções", icon: BookOpen },
@@ -261,7 +261,7 @@ function currentTitle(path: string): string {
   if (path.startsWith("/app/agenda")) return "Agenda de Lives";
   if (path.startsWith("/app/gravadas")) return "Lives Gravadas";
   if (path.startsWith("/app/carteira")) return "Minha Carteira";
-  if (path.startsWith("/app/indique")) return "Indique e Ganhe";
+  if (path.startsWith("/app/chat")) return "Chat Aberto";
   if (path.startsWith("/app/depoimentos")) return "Depoimentos";
   if (path.startsWith("/app/perfil")) return "Perfil";
   if (path.startsWith("/app/premium")) return "Lives Premium";

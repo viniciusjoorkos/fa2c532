@@ -98,13 +98,12 @@ export const livesApi = {
     if (error) throw error;
     return (data ?? []).map(mapLive);
   },
-  async upcoming(includePremium: boolean): Promise<Live[]> {
-    let q = supabase
+  async upcoming(): Promise<Live[]> {
+    const q = supabase
       .from("lives")
       .select("*")
       .neq("status", "finalizada")
       .order("data", { ascending: true });
-    if (!includePremium) q = q.eq("is_premium", false);
     const { data, error } = await q;
     if (error) throw error;
     return (data ?? []).map(mapLive);
@@ -136,6 +135,7 @@ export const livesApi = {
       data: payload.data,
       status: payload.status,
       is_premium: payload.is_premium,
+      plan_access: payload.plan_access ?? ["free"],
     });
     if (error) throw error;
   },
@@ -161,6 +161,7 @@ function mapLive(d: any): Live {
     ganhos: d.ganhos !== null ? Number(d.ganhos) : null,
     perdas: d.perdas !== null ? Number(d.perdas) : null,
     caixa_final: d.caixa_final !== null ? Number(d.caixa_final) : null,
+    plan_access: d.plan_access ?? ["free"],
   };
 }
 

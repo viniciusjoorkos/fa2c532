@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Wallet, Radio, Gift, User } from "lucide-react";
+import { Home, Wallet, Radio, MessageSquare, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { livesApi } from "@/services/api";
@@ -9,7 +9,7 @@ const tabs = [
   { to: "/app", icon: Home, label: "Home", end: true },
   { to: "/app/carteira", icon: Wallet, label: "Carteira" },
   { to: "/app/agenda", icon: Radio, label: "Lives" },
-  { to: "/app/indique", icon: Gift, label: "Indique" },
+  { to: "/app/chat", icon: MessageSquare, label: "Chat" },
   { to: "/app/perfil", icon: User, label: "Perfil" },
 ];
 

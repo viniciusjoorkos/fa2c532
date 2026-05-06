@@ -9,8 +9,11 @@ import { Link } from "react-router-dom";
 import type { Live } from "@/types";
 import { useLiveCountdown } from "@/hooks/useLiveCountdown";
 
-function LiveCountdownCard({ live }: { live: Live }) {
+import { canAccessLive } from "@/lib/calculations";
+
+function LiveCountdownCard({ live, userPlan }: { live: Live; userPlan: string }) {
   const { countdown, canEnter, isLive, isFinished, waitingLink } = useLiveCountdown(live.data, live.status, live.link);
+  const hasAccess = canAccessLive(userPlan, live.plan_access);
 
   return (
     <div className="glass-card flex flex-col gap-3 rounded-xl p-5">
@@ -41,7 +44,11 @@ function LiveCountdownCard({ live }: { live: Live }) {
 
       {/* Countdown or button */}
       <div className="mt-auto">
-        {isLive && live.link ? (
+        {!hasAccess ? (
+          <Link to="/signup?plan=premium">
+            <Button className="w-full bg-transparent border border-primary/30 text-primary hover:bg-primary/10">Requer Upgrade</Button>
+          </Link>
+        ) : isLive && live.link ? (
           <a href={live.link} target="_blank" rel="noreferrer">
             <Button className="w-full bg-primary text-primary-foreground hover:opacity-90 animate-pulse-glow">
               <span className="dot-online mr-2" /> Entrar na Live
@@ -74,12 +81,12 @@ function LiveCountdownCard({ live }: { live: Live }) {
 }
 
 export default function Agenda() {
-  const { isPremium } = useAuth();
+  const { user } = useAuth();
   const [lives, setLives] = useState<Live[]>([]);
 
   useEffect(() => {
-    livesApi.upcoming(isPremium).then(setLives);
-  }, [isPremium]);
+    livesApi.upcoming().then(setLives);
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -97,14 +104,6 @@ export default function Agenda() {
         )}
       </div>
 
-      {!isPremium && (
-        <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
-          <Lock className="h-4 w-4 text-primary" />
-          <p className="text-xs text-muted-foreground">
-            Você está vendo apenas lives do seu plano. <span className="font-semibold text-foreground">Faça upgrade</span> para ter acesso a lives de nível superior.
-          </p>
-        </div>
-      )}
 
       {/* Info banner */}
       <div className="rounded-xl border border-border bg-card/50 p-3 text-xs text-muted-foreground">
@@ -113,7 +112,7 @@ export default function Agenda() {
 
       <div className="grid gap-4 md:grid-cols-2">
         {lives.map((l) => (
-          <LiveCountdownCard key={l.id} live={l} />
+          <LiveCountdownCard key={l.id} live={l} userPlan={user?.plan ?? "free"} />
         ))}
         {lives.length === 0 && (
           <div className="glass-card col-span-full rounded-xl p-10 text-center text-muted-foreground">

@@ -31,4 +31,13 @@ export const siteSettingsApi = {
     const val = await siteSettingsApi.get("free_plan_open");
     return val !== "false";
   },
+
+  async isWalletSessionOpen(): Promise<boolean> {
+    const val = await siteSettingsApi.get("wallet_session_open");
+    return val === "true";
+  },
+
+  async setWalletSessionOpen(open: boolean): Promise<void> {
+    await siteSettingsApi.set("wallet_session_open", open ? "true" : "false");
+  },
 };

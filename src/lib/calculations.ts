@@ -60,3 +60,11 @@ export function formatDate(iso: string): string {
 export function formatShortDate(iso: string): string {
   return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 }
+
+export function canAccessLive(userPlan: string, livePlans?: string[]): boolean {
+  if (userPlan === "gold") return true;
+  const plans = livePlans ?? ["free"];
+  if (userPlan === "pro") return plans.some(p => ["free", "premium", "pro"].includes(p));
+  if (userPlan === "premium") return plans.some(p => ["free", "premium"].includes(p));
+  return plans.some(p => p === "free");
+}
