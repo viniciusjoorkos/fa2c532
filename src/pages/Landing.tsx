@@ -14,6 +14,7 @@ import {
 import * as PricingCard from '@/components/ui/pricing-card';
 import { Button } from '@/components/ui/button';
 import SmokeBackdrop from "@/components/home/SmokeBackdrop";
+import FeaturesSection from "@/components/home/FeaturesSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import Logo from "@/components/Logo";
 import timelineImg from "@/assets/student-timeline.jpg";
