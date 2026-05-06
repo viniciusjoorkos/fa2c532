@@ -43,6 +43,20 @@ function useAnimatedCounter(target: number, duration = 2000) {
   return { count, ref };
 }
 
+function VturbVideo({ id, scriptSrc, html }: { id: string; scriptSrc: string; html: string }) {
+  useEffect(() => {
+    const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);
+    if (!existingScript) {
+      const s = document.createElement("script");
+      s.src = scriptSrc;
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }, [scriptSrc]);
+
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
 function PricingSection() {
   const [freePlanOpen, setFreePlanOpen] = useState(true);
   const [closedMsg, setClosedMsg] = useState("Estamos sem vagas no momento. Tente novamente em breve.");
@@ -160,32 +174,34 @@ function PricingSection() {
           {plans.map((plan) => {
             const isGold = plan.id === "gold";
             const isPro = plan.id === "pro";
+            const isStd = !isGold && !isPro;
+            
             return (
-              <PricingCard.Card key={plan.id} className={`flex flex-col w-full max-w-none ${isPro ? "border-neutral-900 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] bg-neutral-950 text-white" : ""} ${isGold ? "border-yellow-200 bg-gradient-to-b from-yellow-50/80 to-white" : ""}`}>
-                <PricingCard.Header className={isPro ? "bg-neutral-900/50" : isGold ? "bg-yellow-100/30" : ""}>
+              <PricingCard.Card key={plan.id} className={`flex flex-col w-full max-w-none ${isPro ? "border-neutral-200 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white text-neutral-900" : ""} ${isGold ? "border-yellow-200 bg-gradient-to-b from-yellow-50/80 to-white" : ""} ${isStd ? "bg-neutral-900 border-neutral-800 text-white" : ""}`}>
+                <PricingCard.Header className={isPro ? "bg-neutral-50" : isGold ? "bg-yellow-100/30" : "bg-neutral-800/50"}>
                   <PricingCard.Plan>
-                    <PricingCard.PlanName className={isPro ? "text-white/60" : isGold ? "text-yellow-600" : ""}>
+                    <PricingCard.PlanName className={isPro ? "text-neutral-500" : isGold ? "text-yellow-600" : "text-white"}>
                       {plan.icon}
                       <span className="uppercase tracking-widest">{plan.name}</span>
                     </PricingCard.PlanName>
                     {plan.badge && (
-                      <PricingCard.Badge className={isPro ? "bg-white/10 text-white/70 border-white/20" : isGold ? "bg-yellow-100 text-yellow-700 border-yellow-300" : ""}>
+                      <PricingCard.Badge className={isPro ? "bg-neutral-900 text-white border-transparent" : isGold ? "bg-yellow-100 text-yellow-700 border-yellow-300" : "bg-white/10 text-white/70 border-white/20"}>
                         {plan.badge}
                       </PricingCard.Badge>
                     )}
                   </PricingCard.Plan>
                   <PricingCard.Price>
-                    <PricingCard.MainPrice className={isGold ? "bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent" : isPro ? "text-white" : ""}>
+                    <PricingCard.MainPrice className={isGold ? "bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent" : isPro ? "text-neutral-900" : "text-white"}>
                       {plan.price}
                     </PricingCard.MainPrice>
                   </PricingCard.Price>
-                  <PricingCard.Period className={isPro ? "text-white/40" : ""}>{plan.sub}</PricingCard.Period>
+                  <PricingCard.Period className={isPro ? "text-neutral-500" : isGold ? "text-yellow-800" : "text-white/70"}>{plan.sub}</PricingCard.Period>
 
                   {plan.cta && plan.ctaHref ? (
                     <Button
                       asChild
                       variant={isPro ? "default" : "outline"}
-                      className={`w-full mt-4 font-semibold ${isPro ? "bg-white text-neutral-900 hover:bg-neutral-100" : isGold ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : ""}`}
+                      className={`w-full mt-4 font-semibold ${isPro ? "bg-neutral-900 text-white hover:bg-neutral-800" : isGold ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-neutral-800 text-white border-neutral-700 hover:bg-neutral-700"}`}
                     >
                       <Link to={plan.ctaHref}>{plan.cta}</Link>
                     </Button>
@@ -202,15 +218,15 @@ function PricingSection() {
 
                 <PricingCard.Body className="flex-1 flex flex-col">
                   {plan.desc && (
-                    <PricingCard.Description className={isPro ? "text-white/60 text-[12px]" : "text-[12px]"}>
+                    <PricingCard.Description className={isPro ? "text-neutral-600 text-[12px]" : isGold ? "text-[12px]" : "text-white/80 text-[12px]"}>
                       {plan.desc}
                     </PricingCard.Description>
                   )}
                   <PricingCard.List className="mt-4 flex-1">
                     {plan.features.map((item) => (
-                      <PricingCard.ListItem key={item} className={isPro ? "text-white/80" : ""}>
+                      <PricingCard.ListItem key={item} className={isPro ? "text-neutral-700" : isGold ? "" : "text-white/90"}>
                         <CheckCircle2
-                          className={isGold ? "text-yellow-500 w-4 h-4" : isPro ? "text-emerald-400 w-4 h-4" : "text-emerald-500 w-4 h-4"}
+                          className={isGold ? "text-yellow-500 w-4 h-4" : isPro ? "text-emerald-500 w-4 h-4" : "text-emerald-400 w-4 h-4"}
                           aria-hidden="true"
                         />
                         <span>{item}</span>
@@ -224,8 +240,8 @@ function PricingSection() {
                       isGold
                         ? "border-yellow-200 bg-yellow-50 text-yellow-700"
                         : isPro
-                        ? "border-white/10 bg-white/5 text-white/70"
-                        : "border-neutral-100 bg-neutral-50 text-neutral-600"
+                        ? "border-neutral-200 bg-neutral-50 text-neutral-600"
+                        : "border-white/10 bg-white/5 text-white/90"
                     }`}>
                       {plan.extraMsg}
                     </div>
@@ -304,7 +320,10 @@ export default function Landing() {
 
           {/* VTurb Hero Video */}
           <div className="mt-8 sm:mt-12 w-full max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-            <div dangerouslySetInnerHTML={{ __html: `<vturb-smartplayer id="vid-69fadd77ce8c536e45bf5317" style="display: block; margin: 0 auto; width: 100%; "></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/512f6166-0536-4361-9189-645ba6587dff/players/69fadd77ce8c536e45bf5317/v4/player.js", s.async=!0,document.head.appendChild(s); </script>` }} />
+            <VturbVideo
+              scriptSrc="https://scripts.converteai.net/512f6166-0536-4361-9189-645ba6587dff/players/69fadd77ce8c536e45bf5317/v4/player.js"
+              html={`<vturb-smartplayer id="vid-69fadd77ce8c536e45bf5317" style="display: block; margin: 0 auto; width: 100%;"></vturb-smartplayer>`}
+            />
           </div>
         </div>
       </section>
@@ -375,7 +394,10 @@ export default function Landing() {
             </div>
             {/* VTurb Video 2 */}
             <div className="relative mt-8 w-full max-w-[400px] mx-auto overflow-hidden rounded-xl shadow-2xl">
-              <div dangerouslySetInnerHTML={{ __html: `<vturb-smartplayer id="vid-69fad2b51876a88a5720ae39" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/512f6166-0536-4361-9189-645ba6587dff/players/69fad2b51876a88a5720ae39/v4/player.js", s.async=!0,document.head.appendChild(s); </script>` }} />
+              <VturbVideo
+                scriptSrc="https://scripts.converteai.net/512f6166-0536-4361-9189-645ba6587dff/players/69fad2b51876a88a5720ae39/v4/player.js"
+                html={`<vturb-smartplayer id="vid-69fad2b51876a88a5720ae39" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"></vturb-smartplayer>`}
+              />
             </div>
             {/* Premium badge — destaque, sem bolinha amarela */}
             <div className="absolute -top-3 left-6 z-20 inline-flex items-center gap-2 rounded-md border border-neutral-900/90 bg-neutral-900 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.32em] text-amber-300 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]">
