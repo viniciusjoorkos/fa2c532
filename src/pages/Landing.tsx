@@ -258,9 +258,9 @@ export default function Landing() {
       <section className="relative isolate overflow-hidden bg-[#050505] text-white" style={{ minHeight: '100vh' }}>
         {/* Scroll-driven video background */}
         <ScrollVideo
-          mp4Src="/hero/minha-narrativa-1.mp4"
-          webmSrc="/hero/minha-narrativa-1.webm"
-          posterSrc="/hero/minha-narrativa-1-poster.jpg"
+          mp4Src="/hero/minha-narrativa-5.mp4"
+          webmSrc="/hero/minha-narrativa-5.webm"
+          posterSrc="/hero/minha-narrativa-5-poster.jpg"
           className="absolute inset-0 z-[1] h-full w-full"
           objectFit="cover"
           isHero
@@ -370,8 +370,8 @@ export default function Landing() {
           <div className="relative order-2 lg:order-1">
             <div className="relative w-full overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-[0_30px_80px_-30px_rgba(0,0,0,0.18)]">
               <img
-                src={timelineImg}
-                alt="Linha do tempo do aluno: do início ao Studio Max"
+                src="/motivos/motivos-rezende.JPG"
+                alt="Rotina Lucrativa"
                 width={1536}
                 height={896}
                 loading="lazy"
@@ -382,7 +382,7 @@ export default function Landing() {
             <div className="absolute -top-3 left-6 z-20 inline-flex items-center gap-2 rounded-md border border-neutral-900/90 bg-neutral-900 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.32em] text-amber-300 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]">
               <span className="font-mono text-amber-400">01</span>
               <span className="h-3 w-px bg-amber-300/40" />
-              <span className="text-white/90">Arsenal</span>
+              <span className="text-white/90">ROTINA LUCRATIVA</span>
             </div>
           </div>
 
@@ -552,22 +552,34 @@ export default function Landing() {
                   </div>
                   <div className="relative overflow-hidden rounded-2xl ring-1 ring-amber-300/15 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.7)]">
                     <img
-                      src={lanhouseImg}
-                      alt="Rezende Trader Studio — sala premium com estações de operação"
+                      src="/motivos/rezende-siteoficial.JPG"
+                      alt="Rezende Trader Studio — sala premium"
                       width={1536}
                       height={896}
                       loading="lazy"
-                      className="aspect-[16/10] w-full object-cover"
+                      className="aspect-[16/10] w-full object-cover brightness-75"
                     />
+                    {/* Orb / Smoke animation overlay */}
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
+                      <div className="absolute h-[150%] w-[150%] bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_50%)] animate-premium-spin blur-3xl opacity-60" />
+                      <div className="absolute h-[120%] w-[120%] bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.1)_0%,transparent_60%)] animate-pulse blur-2xl opacity-70 mix-blend-screen" />
+                    </div>
+                    {/* Centered Text */}
+                    <div className="absolute inset-0 flex items-center justify-center text-center p-4">
+                      <h3 className="font-serif text-2xl font-semibold tracking-wide text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] sm:text-4xl">
+                        ESTOU TE ESPERANDO <br />
+                        <span className="text-amber-300">DENTRO DO GRUPO</span>
+                      </h3>
+                    </div>
                     {/* Subtle sheen sweep */}
                     <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,rgba(255,220,150,0.10)_50%,transparent_70%)] bg-[length:250%_100%] animate-premium-sheen" />
-                    <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                    <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   </div>
                   {/* Premium badge — destaque, sem bolinha amarela */}
                   <div className="absolute -top-3 left-6 inline-flex items-center gap-2 rounded-md border border-amber-300/40 bg-gradient-to-b from-amber-300 to-amber-500 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.32em] text-neutral-900 shadow-[0_8px_24px_-8px_rgba(212,175,55,0.6)]">
                     <span className="font-mono">02</span>
                     <span className="h-3 w-px bg-neutral-900/30" />
-                    <span>Premium</span>
+                    <span>PREMIUM</span>
                   </div>
                 </div>
 
@@ -617,76 +629,92 @@ export default function Landing() {
         {/* PRICING SECTION */}
         <PricingSection />
 
-        {/* FINAL CTA */}
-        <section className="relative z-10">
-          <div className="mx-auto max-w-3xl px-6 py-24 text-center">
-            <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-neutral-400">
-              Comece hoje
-            </p>
-            <h2 className="mt-3 font-serif text-3xl font-light leading-[1.1] tracking-tight text-neutral-900 sm:text-5xl">
-              Pare de operar sozinho.
-              <br />
-              <span className="italic text-neutral-700">Comece com o plano certo.</span>
-            </h2>
-            <p className="mx-auto mt-5 max-w-md text-[14px] leading-relaxed text-neutral-600">
-              Crie sua conta gratuita agora ou escolha um plano premium para acelerar seus resultados.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to="/signup"
-                className="group inline-flex h-11 items-center gap-1.5 rounded-full bg-neutral-900 px-6 text-[13px] font-medium text-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.4)] transition hover:bg-neutral-800"
-              >
-                Criar conta gratuita
-                <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
-              </Link>
-              <Link
-                to="/login"
-                className="inline-flex h-11 items-center rounded-full border border-neutral-200 px-6 text-[13px] font-medium text-neutral-700 transition hover:border-neutral-400 hover:text-neutral-900"
-              >
-                Já tenho conta
-              </Link>
-            </div>
+        {/* FINAL CTA & FOOTER WRAPPER */}
+        <div className="relative w-full overflow-hidden bg-black text-white/90">
+          {/* Background Video */}
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 h-full w-full object-cover"
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260217_030345_246c0224-10a4-422c-b324-070b7c0eceda.mp4"
+          />
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black/50" />
+
+          {/* Content Area */}
+          <div className="relative z-10">
+            {/* FINAL CTA */}
+            <section className="border-b border-white/10">
+              <div className="mx-auto max-w-3xl px-6 py-24 text-center">
+                <p className="font-mono text-[10px] uppercase tracking-[0.32em] text-white/60">
+                  Comece hoje
+                </p>
+                <h2 className="mt-3 font-serif text-3xl font-light leading-[1.1] tracking-tight text-white sm:text-5xl">
+                  Pare de operar sozinho.
+                  <br />
+                  <span className="italic text-white/80">Comece com o plano certo.</span>
+                </h2>
+                <p className="mx-auto mt-5 max-w-md text-[14px] leading-relaxed text-white">
+                  Crie sua conta gratuita agora ou escolha um plano premium para acelerar seus resultados.
+                </p>
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                  <Link
+                    to="/signup"
+                    className="group inline-flex h-11 items-center gap-1.5 rounded-full bg-white px-6 text-[13px] font-medium text-black shadow-[0_10px_40px_-10px_rgba(255,255,255,0.2)] transition hover:bg-neutral-200"
+                  >
+                    Criar conta gratuita
+                    <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="inline-flex h-11 items-center rounded-full border border-white/30 px-6 text-[13px] font-medium text-white transition hover:border-white hover:bg-white/5"
+                  >
+                    Já tenho conta
+                  </Link>
+                </div>
+              </div>
+            </section>
+
+            {/* FOOTER */}
+            <footer className="mx-auto max-w-6xl px-6 py-10">
+              {/* Top row: brand + links */}
+              <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+                <Logo className="h-4" />
+                <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px]">
+                  <Link to="/privacidade" className="transition hover:text-white">Política de Privacidade</Link>
+                  <span className="hidden h-1 w-1 rounded-full bg-white/15 sm:inline-block" />
+                  <Link to="/termos" className="transition hover:text-white">Política de Uso</Link>
+                  <span className="hidden h-1 w-1 rounded-full bg-white/15 sm:inline-block" />
+                  <a href="mailto:contato@falhaéfalha.online" className="transition hover:text-white">
+                    contato@falhaéfalha.online
+                  </a>
+                </nav>
+              </div>
+
+              {/* Minimal honest disclaimer */}
+              <p className="mt-8 max-w-3xl text-[11px] leading-relaxed text-white/55">
+                Não garantimos resultados. Aplicamos um método de forma diária — você também pode aplicá-lo, e os
+                resultados serão sempre individuais, dependendo de disciplina, contexto de mercado e gestão própria.
+              </p>
+
+              {/* Legal isolation */}
+              <p className="mt-4 max-w-3xl text-[10.5px] leading-relaxed text-white/45">
+                Este site não é afiliado, endossado, patrocinado ou administrado pela Meta Platforms, Inc.
+                (Facebook / Instagram), Google LLC, TikTok ou qualquer outra rede de anúncios. Todo o conteúdo,
+                ofertas e comunicações aqui veiculados são de responsabilidade exclusiva deste site. Operações em
+                opções binárias envolvem alto risco e podem resultar em perda total do capital. Resultados passados
+                não garantem retornos futuros.
+              </p>
+
+              <div className="mt-8 flex flex-col items-start justify-between gap-2 border-t border-white/10 pt-5 text-[10.5px] text-white/45 sm:flex-row sm:items-center">
+                <span>© {new Date().getFullYear()} RZ Trader Studio · Todos os direitos reservados.</span>
+                <span>contato@falhaéfalha.online</span>
+              </div>
+            </footer>
           </div>
-        </section>
-
-        {/* FOOTER — black, blends with smoke bottom */}
-        <footer className="relative z-10 border-t border-white/5 bg-black text-white/55">
-          <div className="mx-auto max-w-6xl px-6 py-10">
-            {/* Top row: brand + links */}
-            <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-              <Logo className="h-4" />
-              <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px]">
-                <Link to="/privacidade" className="transition hover:text-white">Política de Privacidade</Link>
-                <span className="hidden h-1 w-1 rounded-full bg-white/15 sm:inline-block" />
-                <Link to="/termos" className="transition hover:text-white">Política de Uso</Link>
-                <span className="hidden h-1 w-1 rounded-full bg-white/15 sm:inline-block" />
-                <a href="mailto:contato@falhaéfalha.online" className="transition hover:text-white">
-                  contato@falhaéfalha.online
-                </a>
-              </nav>
-            </div>
-
-            {/* Minimal honest disclaimer */}
-            <p className="mt-8 max-w-3xl text-[11px] leading-relaxed text-white/45">
-              Não garantimos resultados. Aplicamos um método de forma diária — você também pode aplicá-lo, e os
-              resultados serão sempre individuais, dependendo de disciplina, contexto de mercado e gestão própria.
-            </p>
-
-            {/* Legal isolation */}
-            <p className="mt-4 max-w-3xl text-[10.5px] leading-relaxed text-white/35">
-              Este site não é afiliado, endossado, patrocinado ou administrado pela Meta Platforms, Inc.
-              (Facebook / Instagram), Google LLC, TikTok ou qualquer outra rede de anúncios. Todo o conteúdo,
-              ofertas e comunicações aqui veiculados são de responsabilidade exclusiva deste site. Operações em
-              opções binárias envolvem alto risco e podem resultar em perda total do capital. Resultados passados
-              não garantem retornos futuros.
-            </p>
-
-            <div className="mt-8 flex flex-col items-start justify-between gap-2 border-t border-white/5 pt-5 text-[10.5px] text-white/35 sm:flex-row sm:items-center">
-              <span>© {new Date().getFullYear()} RZ Trader Studio · Todos os direitos reservados.</span>
-              <span>contato@falhaéfalha.online</span>
-            </div>
-          </div>
-        </footer>
+        </div>
         {/* Spacer for sticky CTA on mobile */}
         <div className="h-20 sm:hidden"></div>
       </div>
