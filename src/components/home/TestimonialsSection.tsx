@@ -64,7 +64,7 @@ const TestimonialsSection = () => {
             Depoimentos
           </p>
           <h2 className="mt-3 font-serif text-3xl font-light leading-tight tracking-tight text-neutral-900 sm:text-5xl">
-            O que nossos membros dizem
+            Está acontecendo em 2026
           </h2>
           <p className="mt-4 text-[14px] leading-relaxed text-neutral-500">
             A prova real de quem aplica o método todos os dias.
