@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ShieldCheck, Bell, Activity } from "lucide-react";
+import { ShieldCheck, Bell, Bot } from "lucide-react";
 
 interface FeatureCardProps {
   title: string;
@@ -70,9 +70,9 @@ export default function FeaturesSection() {
       delay: 0.2,
     },
     {
-      title: "Suporte Dedicado",
-      description: "O sistema avisa quando você está indo bem e quando está precisando regular a estratégia.",
-      icon: <Activity size={32} strokeWidth={2.5} />,
+      title: "IA STUDIO",
+      description: "Só duas ferramentas que uso diariamente e está disponivel para os Alunos Premium.",
+      icon: <Bot size={32} strokeWidth={2.5} />,
       gradient: "linear-gradient(137deg, #4361EE 0%, #E0AEFF 45%, #F72585 100%)",
       delay: 0.3,
     },

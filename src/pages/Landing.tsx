@@ -180,9 +180,9 @@ function PricingSection() {
               <PricingCard.Card key={plan.id} className={`flex flex-col w-full max-w-none ${isPro ? "border-neutral-900 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] bg-white text-neutral-900" : ""} ${isGold ? "border-yellow-200 bg-gradient-to-b from-yellow-50/80 to-white" : ""} ${isStd ? "bg-white border-neutral-200 text-neutral-900 shadow-md" : ""}`}>
                 <PricingCard.Header className="bg-transparent">
                   <PricingCard.Plan>
-                    <PricingCard.PlanName className={isPro ? "text-neutral-900" : isGold ? "text-yellow-700" : "text-neutral-900"}>
+                    <PricingCard.PlanName className={isPro ? "text-neutral-900 drop-shadow-[0_0_15px_rgba(0,0,0,0.15)]" : isGold ? "text-yellow-700 drop-shadow-[0_0_20px_rgba(234,179,8,0.6)]" : "text-neutral-900 drop-shadow-[0_0_15px_rgba(0,0,0,0.1)]"}>
                       {plan.icon}
-                      <span>{plan.name}</span>
+                      <span className="text-2xl sm:text-[15px] font-bold tracking-tight">{plan.name}</span>
                     </PricingCard.PlanName>
                     {plan.badge && (
                       <PricingCard.Badge className={isPro ? "bg-neutral-900 text-white border-transparent" : isGold ? "bg-yellow-100 text-yellow-700 border-yellow-300" : "bg-neutral-100 text-neutral-600 border-neutral-200"}>
@@ -375,6 +375,9 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* PRICING SECTION */}
+      <PricingSection />
+
       {/* EDITORIAL split — Iron-Man styled HUD + 3 stats */}
       <section className="relative overflow-hidden border-t border-neutral-200/70 bg-white">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-20 lg:grid-cols-2 lg:gap-16 lg:py-28">
@@ -538,18 +541,12 @@ export default function Landing() {
                       Garantir minha vaga
                       <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
                     </a>
-                    <span className="text-[10px] uppercase tracking-[0.28em] text-white/30">
-                      Apenas por convite
-                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
-
-        {/* PRICING SECTION */}
-        <PricingSection />
 
         {/* TESTIMONIALS SECTION */}
         <TestimonialsSection />
