@@ -111,7 +111,7 @@ function PricingSection() {
         "Acesso à sala fechada",
       ],
       extraMsg: "Menos achismo. Mais leitura de mercado.",
-      cta: "Evoluir para Premium",
+      cta: "Comprar agora!",
       ctaHref: "/signup?plan=premium",
     },
     {
@@ -133,7 +133,7 @@ function PricingSection() {
         "Caminho para o plano Gold",
       ],
       extraMsg: "Você não assiste o mercado. Você aprende a dominar.",
-      cta: "Virar PRO",
+      cta: "Comprar agora!",
       ctaHref: "/signup?plan=pro",
     },
     {
@@ -177,31 +177,31 @@ function PricingSection() {
             const isStd = !isGold && !isPro;
             
             return (
-              <PricingCard.Card key={plan.id} className={`flex flex-col w-full max-w-none ${isPro ? "border-neutral-200 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-white text-neutral-900" : ""} ${isGold ? "border-yellow-200 bg-gradient-to-b from-yellow-50/80 to-white" : ""} ${isStd ? "bg-neutral-900 border-neutral-800 text-white" : ""}`}>
-                <PricingCard.Header className={isPro ? "bg-neutral-50" : isGold ? "bg-yellow-100/30" : "bg-neutral-800/50"}>
+              <PricingCard.Card key={plan.id} className={`flex flex-col w-full max-w-none ${isPro ? "border-neutral-900 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] bg-white text-neutral-900" : ""} ${isGold ? "border-yellow-200 bg-gradient-to-b from-yellow-50/80 to-white" : ""} ${isStd ? "bg-white border-neutral-200 text-neutral-900 shadow-md" : ""}`}>
+                <PricingCard.Header className="bg-transparent">
                   <PricingCard.Plan>
-                    <PricingCard.PlanName className={isPro ? "text-neutral-500" : isGold ? "text-yellow-600" : "text-white"}>
+                    <PricingCard.PlanName className={isPro ? "text-neutral-900" : isGold ? "text-yellow-700" : "text-neutral-900"}>
                       {plan.icon}
-                      <span className="uppercase tracking-widest">{plan.name}</span>
+                      <span>{plan.name}</span>
                     </PricingCard.PlanName>
                     {plan.badge && (
-                      <PricingCard.Badge className={isPro ? "bg-neutral-900 text-white border-transparent" : isGold ? "bg-yellow-100 text-yellow-700 border-yellow-300" : "bg-white/10 text-white/70 border-white/20"}>
+                      <PricingCard.Badge className={isPro ? "bg-neutral-900 text-white border-transparent" : isGold ? "bg-yellow-100 text-yellow-700 border-yellow-300" : "bg-neutral-100 text-neutral-600 border-neutral-200"}>
                         {plan.badge}
                       </PricingCard.Badge>
                     )}
                   </PricingCard.Plan>
                   <PricingCard.Price>
-                    <PricingCard.MainPrice className={isGold ? "bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent" : isPro ? "text-neutral-900" : "text-white"}>
+                    <PricingCard.MainPrice className={isGold ? "bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent" : "text-neutral-900"}>
                       {plan.price}
                     </PricingCard.MainPrice>
                   </PricingCard.Price>
-                  <PricingCard.Period className={isPro ? "text-neutral-500" : isGold ? "text-yellow-800" : "text-white/70"}>{plan.sub}</PricingCard.Period>
+                  <PricingCard.Period className={isGold ? "text-yellow-800" : "text-neutral-500"}>{plan.sub}</PricingCard.Period>
 
                   {plan.cta && plan.ctaHref ? (
                     <Button
                       asChild
-                      variant={isPro ? "default" : "outline"}
-                      className={`w-full mt-4 font-semibold ${isPro ? "bg-neutral-900 text-white hover:bg-neutral-800" : isGold ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-neutral-800 text-white border-neutral-700 hover:bg-neutral-700"}`}
+                      variant="outline"
+                      className={`w-full mt-4 font-semibold ${isGold ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-neutral-900 text-white hover:bg-neutral-800 border-transparent"}`}
                     >
                       <Link to={plan.ctaHref}>{plan.cta}</Link>
                     </Button>
@@ -218,15 +218,15 @@ function PricingSection() {
 
                 <PricingCard.Body className="flex-1 flex flex-col">
                   {plan.desc && (
-                    <PricingCard.Description className={isPro ? "text-neutral-600 text-[12px]" : isGold ? "text-[12px]" : "text-white/80 text-[12px]"}>
+                    <PricingCard.Description className={isGold ? "text-[12px]" : "text-neutral-600 text-[12px]"}>
                       {plan.desc}
                     </PricingCard.Description>
                   )}
                   <PricingCard.List className="mt-4 flex-1">
                     {plan.features.map((item) => (
-                      <PricingCard.ListItem key={item} className={isPro ? "text-neutral-700" : isGold ? "" : "text-white/90"}>
+                      <PricingCard.ListItem key={item} className={isGold ? "" : "text-neutral-700"}>
                         <CheckCircle2
-                          className={isGold ? "text-yellow-500 w-4 h-4" : isPro ? "text-emerald-500 w-4 h-4" : "text-emerald-400 w-4 h-4"}
+                          className={isGold ? "text-yellow-500 w-4 h-4" : "text-emerald-500 w-4 h-4"}
                           aria-hidden="true"
                         />
                         <span>{item}</span>
@@ -239,9 +239,7 @@ function PricingSection() {
                     <div className={`mt-6 rounded-xl border p-3 text-[11px] leading-relaxed ${
                       isGold
                         ? "border-yellow-200 bg-yellow-50 text-yellow-700"
-                        : isPro
-                        ? "border-neutral-200 bg-neutral-50 text-neutral-600"
-                        : "border-white/10 bg-white/5 text-white/90"
+                        : "border-neutral-200 bg-neutral-50 text-neutral-600"
                     }`}>
                       {plan.extraMsg}
                     </div>
@@ -392,13 +390,7 @@ export default function Landing() {
                 className="block h-auto w-full object-contain"
               />
             </div>
-            {/* VTurb Video 2 */}
-            <div className="relative mt-8 w-full max-w-[400px] mx-auto overflow-hidden rounded-xl shadow-2xl">
-              <VturbVideo
-                scriptSrc="https://scripts.converteai.net/512f6166-0536-4361-9189-645ba6587dff/players/69fad2b51876a88a5720ae39/v4/player.js"
-                html={`<vturb-smartplayer id="vid-69fad2b51876a88a5720ae39" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"></vturb-smartplayer>`}
-              />
-            </div>
+
             {/* Premium badge — destaque, sem bolinha amarela */}
             <div className="absolute -top-3 left-6 z-20 inline-flex items-center gap-2 rounded-md border border-neutral-900/90 bg-neutral-900 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.32em] text-amber-300 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]">
               <span className="font-mono text-amber-400">01</span>
@@ -437,89 +429,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* PILLARS — editorial premium */}
-      <section className="relative overflow-hidden border-t border-neutral-200/80 bg-gradient-to-b from-white via-neutral-50/60 to-white">
-        {/* hairline accent */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
-        <div className="mx-auto max-w-6xl px-6 pt-20 sm:pt-28">
-          {/* Heading row — editorial */}
-          <div className="grid items-end gap-8 sm:grid-cols-12">
-            <div className="sm:col-span-7">
-              <p className="font-mono text-[10px] uppercase tracking-[0.45em] text-neutral-500">
-                O essencial
-              </p>
-              <h2 className="mt-5 font-serif text-[34px] font-light leading-[1.05] tracking-tight text-neutral-900 sm:text-5xl">
-                Tudo que você precisa.
-                <br />
-                <span className="italic text-neutral-400">Nada além.</span>
-              </h2>
-            </div>
-            <div className="sm:col-span-5">
-              <p className="max-w-sm text-[13px] leading-relaxed text-neutral-500 sm:ml-auto sm:text-right">
-                Quatro pilares. Sem ruído, sem promessa milagrosa — apenas o suficiente para operar
-                <span className="text-neutral-900"> com método </span>
-                todos os dias.
-              </p>
-            </div>
-          </div>
 
-          {/* Pillars grid */}
-          <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-neutral-200/80 bg-neutral-200/70 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.18)] sm:mt-20 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                n: "01",
-                t: "Lives diárias",
-                d: "Opere CALL/PUT em tempo real ao lado do expert. Leitura de mercado em voz alta.",
-                tag: "Tempo real",
-              },
-              {
-                n: "02",
-                t: "Banca sob controle",
-                d: "P&L automático, alertas de tilt e stop dinâmico. A disciplina que separa quem fica.",
-                tag: "Risco",
-              },
-              {
-                n: "03",
-                t: "Sinais com leitura",
-                d: "Entrada, expiração e contexto técnico. Você entende o porquê — não chuta.",
-                tag: "Contexto",
-              },
-              {
-                n: "04",
-                t: "Sem promessa fácil",
-                d: "Método, repetição, paciência. Resultado é consequência — nunca slogan.",
-                tag: "Honestidade",
-              },
-            ].map((f) => (
-              <article
-                key={f.n}
-                className="group relative isolate overflow-hidden bg-white p-7 transition-colors duration-500 hover:bg-neutral-50/70 sm:p-9"
-              >
-                {/* hover gold halo */}
-                <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(120%_60%_at_50%_0%,rgba(212,175,55,0.07),transparent_60%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                <div className="flex items-baseline justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-amber-700/80">
-                    {f.n}
-                  </span>
-                  <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-neutral-400">
-                    {f.tag}
-                  </span>
-                </div>
-                <div className="mt-8 h-px w-8 bg-neutral-900/80 transition-all duration-500 group-hover:w-14 group-hover:bg-amber-600" />
-                <h3 className="mt-5 font-serif text-[22px] font-light leading-tight tracking-tight text-neutral-900 sm:text-[26px]">
-                  {f.t}
-                </h3>
-                <p className="mt-3 text-[12.5px] leading-relaxed text-neutral-500">{f.d}</p>
-              </article>
-            ))}
-          </div>
-
-          {/* footnote */}
-          <p className="mx-auto mt-10 max-w-md pb-20 text-center font-mono text-[10px] uppercase tracking-[0.32em] text-neutral-400 sm:mt-14 sm:pb-28">
-            Operação · Risco · Contexto · Honestidade
-          </p>
-        </div>
-      </section>
 
       {/* === COLORED SMOKE WRAPPER — mid-page → black footer === */}
       <div className="relative isolate overflow-hidden bg-white">

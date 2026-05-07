@@ -68,7 +68,19 @@ export default function SiteAssetsTab() {
             <span className={`text-xs font-semibold ${walletSessionOpen ? "text-primary" : "text-destructive"}`}>
               {walletSessionOpen ? "LIBERADO" : "BLOQUEADO"}
             </span>
-            <Switch checked={walletSessionOpen} onCheckedChange={setWalletSessionOpen} />
+            <Switch 
+              checked={walletSessionOpen} 
+              onCheckedChange={async (val) => {
+                setWalletSessionOpen(val);
+                try {
+                  await siteSettingsApi.set("wallet_session_open", val ? "true" : "false");
+                  toast.success("Configuração de sessão atualizada");
+                } catch (e: any) {
+                  toast.error("Erro ao salvar configuração");
+                  setWalletSessionOpen(!val); // revert on error
+                }
+              }} 
+            />
           </div>
         </div>
       </div>
@@ -92,7 +104,19 @@ export default function SiteAssetsTab() {
               <span className={`text-xs font-semibold ${freePlanOpen ? "text-primary" : "text-destructive"}`}>
                 {freePlanOpen ? "ABERTO" : "FECHADO"}
               </span>
-              <Switch checked={freePlanOpen} onCheckedChange={setFreePlanOpen} />
+              <Switch 
+                checked={freePlanOpen} 
+                onCheckedChange={async (val) => {
+                  setFreePlanOpen(val);
+                  try {
+                    await siteSettingsApi.set("free_plan_open", val ? "true" : "false");
+                    toast.success("Configuração do plano free atualizada");
+                  } catch (e: any) {
+                    toast.error("Erro ao salvar configuração");
+                    setFreePlanOpen(!val);
+                  }
+                }} 
+              />
             </div>
           </div>
 

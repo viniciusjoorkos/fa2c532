@@ -53,9 +53,10 @@ export default function Carteira() {
 
   if (!user) return null;
 
+  const sessoesAtivas = sessoes.filter(s => s.status !== 'rejected');
   const sessoesAprovadas = sessoes.filter(s => s.status === 'approved');
   const totalLucro = sessoesAprovadas.reduce((acc, s) => acc + s.resultado, 0);
-  const limiteAtingido = user.plan === "free" && sessoesAprovadas.length >= FREE_LIMIT;
+  const limiteAtingido = user.plan === "free" && sessoesAtivas.length >= FREE_LIMIT;
 
   async function salvarBanca(e: React.FormEvent) {
     e.preventDefault();
@@ -165,11 +166,15 @@ export default function Carteira() {
         </Dialog>
       </div>
 
-      {limiteAtingido && (
+      {limiteAtingido ? (
         <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-sm text-warning">
           Você atingiu o limite de {FREE_LIMIT} sessões do plano Free. Faça upgrade para Premium para continuar.
         </div>
-      )}
+      ) : !isWalletOpen ? (
+        <div className="rounded-xl border border-muted bg-muted/50 p-4 text-sm text-muted-foreground">
+          🔒 O registro de novas sessões está fechado temporariamente no momento.
+        </div>
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard accent="primary" label="Saldo atual" value={formatBRL(carteira.saldo_atual)} icon={<Wallet className="h-4 w-4" />} />

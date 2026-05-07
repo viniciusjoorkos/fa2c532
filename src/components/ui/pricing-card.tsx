@@ -18,7 +18,7 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
 function Header({
 	className,
 	children,
-	glassEffect = true,
+	glassEffect = false,
 	...props
 }: React.ComponentProps<'div'> & {
 	glassEffect?: boolean;
@@ -26,7 +26,7 @@ function Header({
 	return (
 		<div
 			className={cn(
-				'bg-muted/80 dark:bg-muted/50 relative mb-4 rounded-xl border p-4',
+				'relative mb-6',
 				className,
 			)}
 			{...props}
@@ -66,7 +66,7 @@ function PlanName({ className, ...props }: React.ComponentProps<'div'>) {
 	return (
 		<div
 			className={cn(
-				"text-muted-foreground flex items-center gap-2 text-sm font-medium [&_svg:not([class*='size-'])]:size-4",
+				"text-muted-foreground flex items-center gap-2 text-[13px] font-semibold tracking-wide [&_svg:not([class*='size-'])]:size-4",
 				className,
 			)}
 			{...props}
@@ -95,7 +95,7 @@ function Price({ className, ...props }: React.ComponentProps<'div'>) {
 function MainPrice({ className, ...props }: React.ComponentProps<'span'>) {
 	return (
 		<span
-			className={cn('text-3xl font-extrabold tracking-tight', className)}
+			className={cn('text-4xl font-light tracking-tight', className)}
 			{...props}
 		/>
 	);

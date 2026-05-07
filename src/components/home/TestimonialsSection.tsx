@@ -1,37 +1,53 @@
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
 import { motion } from "framer-motion";
 
-const testimonials = [
+import { TestimonialItem } from "@/components/ui/testimonials-columns-1";
+
+const textTestimonials: TestimonialItem[] = [
   {
+    type: 'text',
     text: "Toda satisfação é minha, tudo que você fez na minha vida não cabe em um cadernos. Eu só tenho a agredecer irmão. Obrigado e continue amigo assim",
     name: "João P.",
     role: "Membro",
   },
   {
+    type: 'text',
     text: "Eu entrei com 400 e levei pra 7.400 em menos de 1 mês. Só penso em bem estar todos os dias e não perco uma chamada. Já recomendei e vou recomendar mais.",
     name: "Luiz F.",
     role: "Membro",
   },
   {
+    type: 'text',
     text: "O Rezende de longe um dos mentores financeiros mais estratégico que eu conheço. Já aprendi o principal com ele agora fico acompanhando as lives. Um abraço e tamos juntos.",
     name: "Fabrício S.",
     role: "Membro",
   },
   {
+    type: 'text',
     text: "Sou amigo do Rezende e acompanho a mais de 2 anos. Eu estudei e vi várias formas mas sempre que parei de dar atenção para o Rezende não funcionou direito. Hoje o meu dia a dia é com contato com ele sem mudança de planos",
     name: "João F.",
     role: "Membro",
   },
   {
+    type: 'text',
     text: "Tamos juntos Rezende que cada dia fique mais feliz meu camarada.",
     name: "Rogério L.",
     role: "Membro",
   },
 ];
 
-const firstColumn = [testimonials[0], testimonials[1], testimonials[2]];
-const secondColumn = [testimonials[3], testimonials[4], testimonials[0]];
-const thirdColumn = [testimonials[1], testimonials[2], testimonials[3]];
+const imageTestimonials: TestimonialItem[] = [
+  { type: 'image', src: "/motivos/motivo1.jpg" },
+  { type: 'image', src: "/motivos/motivo2.jpg" },
+  { type: 'image', src: "/motivos/motivo3.jpg" },
+  { type: 'image', src: "/motivos/motivo4.jpg" },
+  { type: 'image', src: "/motivos/motivo5.jpg" },
+];
+
+// Misturando imagens e textos para criar um efeito heterogêneo bonito
+const firstColumn = [imageTestimonials[0], textTestimonials[0], imageTestimonials[1]];
+const secondColumn = [textTestimonials[1], imageTestimonials[2], textTestimonials[2]];
+const thirdColumn = [imageTestimonials[3], textTestimonials[3], imageTestimonials[4], textTestimonials[4]];
 
 const TestimonialsSection = () => {
   return (
@@ -55,10 +71,10 @@ const TestimonialsSection = () => {
           </p>
         </motion.div>
 
-        <div className="flex justify-center gap-6 mt-14 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-[700px] overflow-hidden">
-          <TestimonialsColumn testimonials={firstColumn} duration={18} />
-          <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={23} />
-          <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={19} />
+        <div className="flex justify-center gap-4 sm:gap-6 mt-14 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-[600px] overflow-hidden">
+          <TestimonialsColumn testimonials={firstColumn} duration={38} />
+          <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={45} />
+          <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={42} />
         </div>
       </div>
     </section>
