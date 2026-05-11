@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import DottedSurface from "@/components/home/DottedSurface";
 import Logo from "@/components/Logo";
 
 export default function Login() {
@@ -16,7 +15,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const didLoginRef = useRef(false);
 
-  // Navigate once user is loaded after login
   useEffect(() => {
     if (didLoginRef.current && user) {
       didLoginRef.current = false;
@@ -38,105 +36,139 @@ export default function Login() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050505] text-white antialiased">
-      <DottedSurface />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_30%,rgba(212,175,55,0.16),transparent_70%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_100%,rgba(0,0,0,0.6),transparent_60%)]" />
+    <div className="relative min-h-screen overflow-hidden bg-black text-white antialiased">
+      {/* Apple-style very subtle radial — no heavy grain, just depth */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,255,255,0.055) 0%, transparent 70%)",
+        }}
+      />
+      {/* Soft vignette bottom */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 100% 50% at 50% 110%, rgba(0,0,0,0.7) 0%, transparent 60%)",
+        }}
+      />
 
-      {/* top bar */}
+      {/* Top bar — ultra-minimal */}
       <header className="relative z-10">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16 sm:px-6">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[11px] text-white/60 backdrop-blur transition hover:border-white/20 hover:text-white"
-          >
-            <ArrowLeft className="h-3 w-3" /> Voltar
-          </Link>
-          <Link to="/" className="flex items-center" aria-label="RZ Trader Studio">
-            <Logo className="h-5 sm:h-6" />
+        <div className="mx-auto flex h-14 max-w-5xl items-center justify-center px-5 sm:h-16">
+          <Link to="/" aria-label="RZ Trader Studio" className="opacity-80 transition hover:opacity-100">
+            <Logo className="h-6 sm:h-7" />
           </Link>
         </div>
       </header>
 
-      <main className="relative z-10 flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 pb-16 pt-6 sm:pt-10">
-        <div className="w-full max-w-[420px]">
-          {/* eyebrow */}
-          <div className="text-center">
-            <p className="font-mono text-[9px] uppercase tracking-[0.45em] text-amber-300/80 sm:text-[10px]">
-              Área <span className="mx-2 text-white/30">·</span> de <span className="mx-2 text-white/30">·</span> membros
-            </p>
-            <h1 className="mt-5 font-serif text-[30px] font-light leading-[1.05] tracking-tight text-white sm:text-4xl">
-              Entrar no <span className="italic text-amber-300/95">hub.</span>
-            </h1>
-            <p className="mx-auto mt-3 max-w-xs text-[12.5px] leading-relaxed text-white/55">
-              Acesso restrito por convite. Use as credenciais enviadas após a sua compra.
-            </p>
-          </div>
+      <main className="relative z-10 flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-5 pb-16 pt-6">
+        <div className="w-full max-w-[380px]">
 
+          {/* Eyebrow */}
+          <p className="text-center font-mono text-[9px] uppercase tracking-[0.5em] text-white/25">
+            Área de membros
+          </p>
+
+          {/* Title */}
+          <h1 className="mt-5 text-center font-serif text-[28px] font-light leading-[1.1] tracking-tight text-white sm:text-[34px]">
+            Entrar na plataforma
+          </h1>
+          <p className="mt-2 text-center text-[12.5px] leading-relaxed text-white/35">
+            Use as credenciais criadas no cadastro.
+          </p>
+
+          {/* Card */}
           <form
             onSubmit={onSubmit}
-            className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:p-7"
+            className="mt-8 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 shadow-[0_32px_80px_-24px_rgba(0,0,0,0.8)] backdrop-blur-2xl sm:p-7"
+            style={{ WebkitBackdropFilter: "blur(24px)" }}
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3.5">
+              {/* Email */}
               <div>
-                <label htmlFor="email" className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/40">
-                  Email
+                <label
+                  htmlFor="login-email"
+                  className="block pb-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-white/35"
+                >
+                  E-mail
                 </label>
                 <input
-                  id="email"
+                  id="login-email"
                   type="email"
                   autoComplete="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 text-base text-white placeholder:text-white/25 outline-none transition focus:border-amber-300/40 focus:bg-black/50"
+                  placeholder="nome@email.com"
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3.5 py-3 text-[15px] text-white placeholder:text-white/20 outline-none transition-all focus:border-white/20 focus:bg-white/[0.07] focus:ring-0"
                 />
               </div>
 
+              {/* Password */}
               <div>
-                <label htmlFor="password" className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/40">
-                  Senha
-                </label>
+                <div className="flex items-center justify-between pb-1.5">
+                  <label
+                    htmlFor="login-pwd"
+                    className="font-mono text-[10px] uppercase tracking-[0.28em] text-white/35"
+                  >
+                    Senha
+                  </label>
+                  <Link
+                    to="/recuperar-senha"
+                    className="text-[11px] text-white/35 transition hover:text-white/60"
+                  >
+                    Esqueceu?
+                  </Link>
+                </div>
                 <input
-                  id="password"
+                  id="login-pwd"
                   type="password"
                   autoComplete="current-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="mt-2 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 text-base text-white placeholder:text-white/25 outline-none transition focus:border-amber-300/40 focus:bg-black/50"
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3.5 py-3 text-[15px] text-white placeholder:text-white/15 outline-none transition-all focus:border-white/20 focus:bg-white/[0.07]"
                 />
-                <div className="mt-2 flex justify-end">
-                  <Link to="/recuperar-senha" className="text-[11px] text-white/50 transition hover:text-white">
-                    Esqueceu sua senha?
-                  </Link>
-                </div>
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className="group mt-2 inline-flex h-11 items-center justify-center gap-1.5 rounded-full bg-white text-[13px] font-medium text-neutral-900 shadow-[0_10px_40px_-10px_rgba(255,255,255,0.4)] transition hover:bg-neutral-100 disabled:opacity-60"
+                className="group mt-1 flex h-12 items-center justify-center gap-2 rounded-xl bg-white text-[14px] font-medium text-neutral-900 shadow-[0_8px_32px_-8px_rgba(255,255,255,0.25)] transition hover:bg-neutral-50 active:scale-[0.98] disabled:opacity-55"
               >
-                {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                {loading ? "Entrando…" : "Entrar"}
-                {!loading && <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />}
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-neutral-500" />
+                ) : (
+                  <>
+                    Entrar
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </>
+                )}
               </button>
             </div>
           </form>
 
-          <p className="mt-6 text-center text-[12px] text-white/50">
-            Ainda não é membro?{" "}
-            <Link to="/signup" className="font-medium text-amber-300/90 transition hover:text-amber-200">
-              Solicitar acesso →
-            </Link>
-          </p>
-
-          <p className="mt-8 text-center font-mono text-[9px] uppercase tracking-[0.32em] text-white/25">
-            RZ Trader Studio · acesso por convite
-          </p>
+          {/* Footer links */}
+          <div className="mt-6 flex flex-col items-center gap-3">
+            <p className="text-[12px] text-white/30">
+              Ainda não tem conta?{" "}
+              <Link
+                to="/signup?plan=free"
+                className="font-medium text-white/55 underline-offset-2 transition hover:text-white/80"
+              >
+                Criar conta grátis
+              </Link>
+            </p>
+            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-white/15">
+              RZ Trader Studio
+            </p>
+          </div>
         </div>
       </main>
     </div>

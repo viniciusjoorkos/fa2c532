@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, ShieldCheck, Lock, Sparkles, Loader2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, ShieldCheck, Lock, Sparkles, Loader2, CheckCircle2, Mail, InboxIcon } from "lucide-react";
 import DottedSurface from "@/components/home/DottedSurface";
-import { PERFECTPAY_CHECKOUT_URL, goToCheckout } from "@/lib/checkout";
+import { PERFECTPAY_PREMIUM_URL, PERFECTPAY_PRO_URL, goToCheckout } from "@/lib/checkout";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,15 +35,8 @@ export default function Signup() {
   }, []);
 
   function handleCheckout(e: React.MouseEvent) {
-    if (PERFECTPAY_CHECKOUT_URL === "#") {
-      e.preventDefault();
-      toast.message("Checkout em breve", {
-        description: "O link de pagamento ainda está sendo configurado.",
-      });
-      return;
-    }
     e.preventDefault();
-    goToCheckout();
+    goToCheckout(planParam === "pro" ? "pro" : "premium");
   }
 
   async function handleFreeSignup(e: React.FormEvent) {
@@ -64,8 +57,7 @@ export default function Signup() {
         return;
       }
       setSuccess(true);
-      toast.success("Conta criada com sucesso!");
-      setTimeout(() => navigate("/app"), 2000);
+      toast.success("Cadastro realizado! Verifique seu e-mail.");
     } finally {
       setLoading(false);
     }
@@ -128,11 +120,61 @@ export default function Signup() {
                   </div>
                 </div>
               ) : success ? (
-                <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:p-7">
-                  <div className="flex flex-col items-center gap-3 py-6 text-center">
-                    <CheckCircle2 className="h-10 w-10 text-emerald-400" />
-                    <p className="text-lg font-semibold text-white">Conta criada!</p>
-                    <p className="text-sm text-white/60">Redirecionando para o dashboard...</p>
+                <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:p-8">
+                  <div className="flex flex-col items-center gap-4 text-center">
+                    {/* Animated envelope icon */}
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10">
+                      <Mail className="h-7 w-7 text-emerald-400" />
+                    </div>
+
+                    <div>
+                      <p className="text-[18px] font-semibold text-white">Verifique seu e-mail</p>
+                      <p className="mt-1 text-[13px] text-white/50">Enviamos um link de confirmação para</p>
+                      <p className="mt-0.5 break-all text-[13px] font-medium text-emerald-400">{email}</p>
+                    </div>
+
+                    {/* Steps */}
+                    <div className="w-full rounded-xl border border-white/8 bg-white/[0.03] p-4 text-left">
+                      <p className="mb-3 font-mono text-[9px] uppercase tracking-[0.35em] text-white/30">Como confirmar</p>
+                      <ol className="flex flex-col gap-3">
+                        {[
+                          { n: "1", t: "Abra seu e-mail", d: `Acesse a caixa de entrada de ${email}` },
+                          { n: "2", t: "Encontre o e-mail da RZ Studio", d: "Procure por \"Confirme seu cadastro\" — cheque o spam se não encontrar" },
+                          { n: "3", t: "Clique em Confirmar", d: "Após clicar no link você será redirecionado e sua conta estará ativa" },
+                        ].map((step) => (
+                          <li key={step.n} className="flex items-start gap-3">
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 font-mono text-[10px] font-bold text-white/60">
+                              {step.n}
+                            </span>
+                            <div>
+                              <p className="text-[12px] font-medium text-white/80">{step.t}</p>
+                              <p className="text-[11px] text-white/40">{step.d}</p>
+                            </div>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+
+                    {/* Quick action button */}
+                    <a
+                      href="https://mail.google.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] text-[13px] text-white/70 transition hover:border-white/25 hover:bg-white/[0.08] hover:text-white"
+                    >
+                      <InboxIcon className="h-3.5 w-3.5" />
+                      Abrir Gmail
+                    </a>
+
+                    <p className="text-[11px] text-white/30">
+                      Não recebeu?{" "}
+                      <button
+                        onClick={() => setSuccess(false)}
+                        className="text-white/50 underline transition hover:text-white/70"
+                      >
+                        Tentar novamente
+                      </button>
+                    </p>
                   </div>
                 </div>
               ) : (
@@ -261,7 +303,7 @@ export default function Signup() {
                 </ul>
 
                 <a
-                  href={PERFECTPAY_CHECKOUT_URL}
+                  href={planParam === "pro" ? PERFECTPAY_PRO_URL : PERFECTPAY_PREMIUM_URL}
                   onClick={handleCheckout}
                   className="group mt-6 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full bg-white text-[13px] font-medium text-neutral-900 shadow-[0_10px_40px_-10px_rgba(255,255,255,0.4)] transition hover:bg-neutral-100"
                 >

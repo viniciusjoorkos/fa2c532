@@ -28,6 +28,8 @@ import Inbox from "./pages/app/Inbox";
 import RzIa from "./pages/app/RzIa";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import ThankYouPremium from "./pages/ThankYouPremium";
+import ThankYouPro from "./pages/ThankYouPro";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/termos" element={<Terms />} />
             <Route path="/recuperar-senha" element={<ForgotPassword />} />
             <Route path="/atualizar-senha" element={<ResetPassword />} />
+            <Route path="/982cscadastro" element={<ThankYouPremium />} />
+            <Route path="/985csiacadastro" element={<ThankYouPro />} />
 
             <Route
               path="/app"

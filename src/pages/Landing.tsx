@@ -18,6 +18,7 @@ import SmokeBackdrop from "@/components/home/SmokeBackdrop";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import Logo from "@/components/Logo";
+import { MorphingText } from "@/components/ui/morphing-text";
 import timelineImg from "@/assets/student-timeline.jpg";
 import lanhouseImg from "@/assets/lanhouse-rezende.jpg";
 import rezendeHistoriaImg from "@/assets/rezende-historia.webp";
@@ -414,6 +415,47 @@ export default function Landing() {
       {/* PRICING SECTION */}
       <PricingSection />
 
+      {/* MORPHING TEXT STATEMENT */}
+      <section className="relative overflow-hidden bg-neutral-950 py-20 sm:py-28">
+        {/* Subtle grain/glow */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_50%,rgba(255,255,255,0.03),transparent)]" />
+
+        <div className="mx-auto max-w-5xl px-6 text-center">
+          <p className="font-mono text-[9px] uppercase tracking-[0.5em] text-white/25 sm:text-[10px]">
+            RZ Studio
+          </p>
+
+          {/* Morphing words */}
+          <div className="mt-4 [filter:url(#morphing-blur)]">
+            <MorphingText
+              texts={[
+                "REZENDE",
+                "NÃO",
+                "BRINCA",
+                "REZENDE",
+                "SOMA",
+                "ENTRE",
+                "PARA",
+                "RZ STUDIO",
+                "RZ DINÂMICO",
+              ]}
+              className="text-white"
+            />
+          </div>
+
+          <p className="mx-auto mt-6 max-w-sm text-[14px] leading-relaxed text-white/40">
+            Faça parte da comunidade. Aprenda. Evolua. Lucre.
+          </p>
+
+          <Link
+            to="/signup?plan=free"
+            className="group mt-8 inline-flex h-11 items-center gap-2 rounded-full border border-white/15 bg-white/[0.05] px-6 text-[13px] font-medium text-white/70 backdrop-blur transition hover:border-white/25 hover:bg-white/10 hover:text-white"
+          >
+            Criar conta grátis
+            <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+          </Link>
+        </div>
+      </section>
       {/* BÔNUS SECTION — IA RZ DINÂMICO */}
       <section className="relative overflow-hidden bg-[#fafafa] py-24 sm:py-32">
         {/* Ambient top glow */}
