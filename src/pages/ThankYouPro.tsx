@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ArrowRight, Loader2, Mail, Lock, Users, Zap } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight, Loader2, Lock, Users, Zap } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -11,10 +11,10 @@ const PLAN = "pro" as const;
 
 export default function ThankYouPro() {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,8 +39,8 @@ export default function ThankYouPro() {
         await supabase.from("profiles").update({ plan: PLAN }).eq("id", data.user.id);
       }
 
-      setDone(true);
-      toast.success("Conta criada! Verifique seu e-mail para confirmar.");
+      toast.success("Conta criada! Bem-vindo à RZ Studio.");
+      navigate("/app");
     } finally {
       setLoading(false);
     }
@@ -86,33 +86,6 @@ export default function ThankYouPro() {
             </p>
           </div>
 
-          {/* Form or Success */}
-          {done ? (
-            <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-7 text-center backdrop-blur-xl">
-              <div className="mb-4 flex justify-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10">
-                  <Mail className="h-6 w-6 text-emerald-400" />
-                </div>
-              </div>
-              <p className="text-[17px] font-semibold text-white">Verifique seu e-mail</p>
-              <p className="mt-2 text-[13px] text-white/45">
-                Enviamos um link de confirmação para{" "}
-                <span className="font-medium text-emerald-400">{email}</span>.
-                <br />Após confirmar, seu acesso PRO estará ativo.
-              </p>
-
-              <a
-                href={MEMBERS_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group mt-6 flex h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.05] text-[13px] text-white/70 transition hover:border-white/25 hover:bg-white/10 hover:text-white"
-              >
-                <Users className="h-3.5 w-3.5" />
-                Entre aqui para aproveitar ao máximo a RZ Studio
-                <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
-              </a>
-            </div>
-          ) : (
             <form
               onSubmit={handleSubmit}
               className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)] backdrop-blur-xl sm:p-7"
@@ -121,7 +94,7 @@ export default function ThankYouPro() {
                 {/* Email */}
                 <div>
                   <label htmlFor="tp-email" className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-white/40">
-                    <Mail className="h-3 w-3" /> E-mail
+                    E-mail
                   </label>
                   <input
                     id="tp-email"
@@ -166,21 +139,18 @@ export default function ThankYouPro() {
                 </button>
               </div>
             </form>
-          )}
 
           {/* Área de Membros CTA */}
-          {!done && (
-            <a
-              href={MEMBERS_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group mt-5 flex items-center justify-center gap-2 text-[12px] text-white/35 transition hover:text-white/60"
-            >
-              <Users className="h-3.5 w-3.5" />
-              Entre aqui para aproveitar ao máximo a RZ Studio
-              <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
-            </a>
-          )}
+          <a
+            href={MEMBERS_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group mt-5 flex items-center justify-center gap-2 text-[12px] text-white/35 transition hover:text-white/60"
+          >
+            <Users className="h-3.5 w-3.5" />
+            Entre aqui para aproveitar ao máximo a RZ Studio
+            <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
+          </a>
 
           <p className="mt-6 text-center font-mono text-[9px] uppercase tracking-[0.32em] text-white/20">
             RZ Trader Studio · Plano PRO

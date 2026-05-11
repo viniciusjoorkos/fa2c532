@@ -23,6 +23,13 @@ function LivePlanBadge({ live }: { live: Live }) {
   return <span className="rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Free</span>;
 }
 
+function UserPlanBadgeHeader({ plan, isGold }: { plan: string | undefined; isGold: boolean | undefined }) {
+  if (isGold || plan === "gold") return <span className="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-amber-400 text-black shadow-[0_0_10px_rgba(251,191,36,0.3)]">Gold ✦</span>;
+  if (plan === "pro") return <span className="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-cyan-400 text-black shadow-[0_0_10px_rgba(34,211,238,0.3)]">PRO ⚡</span>;
+  if (plan === "premium") return <span className="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-primary text-white shadow-[0_0_10px_var(--primary-glow)]">Premium 👑</span>;
+  return <span className="rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.3)]">Free</span>;
+}
+
 function LiveRow({ live, userPlan }: { live: Live; userPlan: string }) {
   const { countdown, canEnter, isLive, waitingLink } = useLiveCountdown(live.data, live.status, live.link);
   const hasLink = !!live.link && live.link.trim() !== "";
@@ -115,9 +122,9 @@ export default function Home() {
       <div className="flex items-center justify-between">
         <div className="min-w-0">
           <p className="text-[10px] text-muted-foreground">Bem-vindo de volta</p>
-          <h2 className="flex items-center gap-1.5 text-base font-bold tracking-tight sm:text-lg truncate">
+          <h2 className="flex items-center gap-2 text-base font-bold tracking-tight sm:text-lg truncate">
             {user?.name}
-            {user?.is_gold && <span className="text-amber-400 text-sm" title="Gold">✦</span>}
+            <UserPlanBadgeHeader plan={user?.plan} isGold={user?.is_gold} />
           </h2>
         </div>
         <div className="flex items-center gap-2 shrink-0">
