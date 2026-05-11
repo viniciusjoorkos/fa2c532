@@ -89,6 +89,7 @@ function PricingSection() {
         "Controle e histórico da sua evolução",
         "Ranking e sistema de progresso",
         "Indicações e recompensas",
+        "IA RZ Dinâmico",
       ],
       extraMsg: "Entre no mercado sem pagar nada",
       cta: freePlanOpen ? "Começar grátis" : null,
@@ -110,6 +111,7 @@ function PricingSection() {
         "Lives exclusivas com análises mais profundas",
         "Setups explicados ao vivo",
         "Acesso à sala fechada",
+        "IA RZ Dinâmico",
       ],
       extraMsg: "Menos achismo. Mais leitura de mercado.",
       cta: "Comprar agora!",
@@ -133,6 +135,7 @@ function PricingSection() {
         "Acesso ao histórico completo",
         "Prioridade total no suporte",
         "Caminho para o plano Gold",
+        "IA RZ Dinâmico",
       ],
       extraMsg: "Você não assiste o mercado. Você aprende a dominar.",
       cta: "Comprar agora!",
@@ -152,6 +155,7 @@ function PricingSection() {
         "Tudo do plano PRO",
         "Ambiente fechado com os melhores",
         "Acesso direto e estratégico",
+        "IA RZ Dinâmico (Plus)",
       ],
       cta: null,
       extraMsg: "Não é sobre pagar. É sobre merecer.",
@@ -428,18 +432,19 @@ export default function Landing() {
               BÔNUS
             </h2>
 
-            {/* Brand wordmark — IA (RZ DINÂMICO) */}
-            <div className="mt-4 flex flex-col items-center gap-1">
-              <div className="flex items-baseline gap-3">
-                <span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text font-serif text-3xl font-black tracking-tight text-transparent sm:text-4xl lg:text-5xl">
+            {/* Brand wordmark — IA · RZ DINÂMICO */}
+            <div className="mt-5 flex flex-col items-center gap-2">
+              <h3 className="flex items-center gap-3 font-sans text-2xl font-bold tracking-tight sm:text-3xl">
+                <span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
                   IA
                 </span>
-                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.55em] text-neutral-400 sm:text-[13px]">
+                <span className="h-5 w-px bg-neutral-300" />
+                <span className="font-light text-neutral-700 tracking-widest">
                   RZ DINÂMICO
                 </span>
-              </div>
-              <p className="mt-1 font-sans text-[13px] font-medium uppercase tracking-[0.3em] text-cyan-600 sm:text-[14px]">
-                Ilimitado
+              </h3>
+              <p className="font-mono text-[11px] uppercase tracking-[0.4em] text-cyan-500">
+                ilimitado
               </p>
             </div>
 
@@ -499,6 +504,36 @@ export default function Landing() {
               <div className="absolute bottom-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 backdrop-blur-md">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                 <span className="font-mono text-[10px] uppercase tracking-widest text-white/80">Dashboard completo</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Assistente RZ Studio — imagem 4 separada ── */}
+          <div className="mt-16 border-t border-neutral-200/70 pt-14">
+            {/* Mini header */}
+            <div className="mb-8 text-center">
+              <p className="font-mono text-[10px] uppercase tracking-[0.45em] text-neutral-400">Assistência</p>
+              <h3 className="mt-2 font-serif text-2xl font-semibold tracking-tight text-neutral-900 sm:text-3xl">
+                Assistente RZ Studio
+              </h3>
+              <p className="mx-auto mt-3 max-w-lg text-[14px] leading-relaxed text-neutral-500">
+                Aqui o aluno pode analisar tudo que está fazendo. Envie texto ou imagens para receber uma análise técnica.
+              </p>
+            </div>
+
+            {/* Full-width image card */}
+            <div className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-900 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.18)] transition-all duration-500 hover:shadow-[0_30px_80px_-20px_rgba(6,182,212,0.22)] hover:border-cyan-300/60">
+              <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <img
+                src="/motivos2/home-lavenga-4.png"
+                alt="Assistente RZ Studio — análise técnica por texto ou imagem"
+                loading="lazy"
+                className="block w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.015]"
+                style={{maxHeight: '520px'}}
+              />
+              <div className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 backdrop-blur-md">
+                <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
+                <span className="font-mono text-[10px] uppercase tracking-widest text-white/80">IA Chat · Análise técnica</span>
               </div>
             </div>
           </div>
