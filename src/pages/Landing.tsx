@@ -113,7 +113,7 @@ function PricingSection() {
       ],
       extraMsg: "Menos achismo. Mais leitura de mercado.",
       cta: "Comprar agora!",
-      ctaHref: "https://wa.link/y2flur",
+      ctaHref: "https://go.perfectpay.com.br/PPU38CQBJT8",
       ctaExternal: true,
     },
     {
@@ -136,7 +136,7 @@ function PricingSection() {
       ],
       extraMsg: "Você não assiste o mercado. Você aprende a dominar.",
       cta: "Comprar agora!",
-      ctaHref: "https://wa.link/y2flur",
+      ctaHref: "https://go.perfectpay.com.br/PPU38CQBJTI",
       ctaExternal: true,
     },
     {
@@ -410,53 +410,100 @@ export default function Landing() {
       {/* PRICING SECTION */}
       <PricingSection />
 
-      {/* BÔNUS SECTION — IA Lavenga */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-white via-neutral-50 to-white py-24 sm:py-32">
-        {/* Decorative ambient glow */}
-        <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[500px] w-[800px] bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.08),transparent_70%)] blur-3xl" />
-        
+      {/* BÔNUS SECTION — IA RZ DINÂMICO */}
+      <section className="relative overflow-hidden bg-[#fafafa] py-24 sm:py-32">
+        {/* Ambient top glow */}
+        <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[1000px] bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.07),transparent_65%)] blur-3xl" />
+
         <div className="mx-auto max-w-6xl px-6">
-          {/* Header */}
+
+          {/* ── Header ─────────────────────────────────── */}
           <div className="text-center">
             <p className="inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.45em] text-cyan-700">
               <Gift className="h-3.5 w-3.5" />
               Bônus Exclusivo
             </p>
-            <h2 className="mt-6 font-serif text-4xl font-bold leading-[1.05] tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl">
+
+            <h2 className="mt-6 font-serif text-5xl font-bold leading-none tracking-tight text-neutral-900 sm:text-6xl lg:text-7xl">
               BÔNUS
             </h2>
-            <h3 className="mt-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-600 bg-clip-text font-serif text-2xl font-bold tracking-tight text-transparent sm:text-3xl lg:text-4xl">
-              IA LAVERGA ILIMITADO
-            </h3>
-            <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-neutral-600">
-              Em qualquer plano até mesmo no plano free estamos liberando a <strong className="text-neutral-900">IA Laverga ilimitada</strong>. Aproveite pois esse bônus é gratuito, ilimitado o uso para os primeiros <strong className="text-cyan-600">500 novos alunos</strong>.
+
+            {/* Brand wordmark — IA (RZ DINÂMICO) */}
+            <div className="mt-4 flex flex-col items-center gap-1">
+              <div className="flex items-baseline gap-3">
+                <span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text font-serif text-3xl font-black tracking-tight text-transparent sm:text-4xl lg:text-5xl">
+                  IA
+                </span>
+                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.55em] text-neutral-400 sm:text-[13px]">
+                  RZ DINÂMICO
+                </span>
+              </div>
+              <p className="mt-1 font-sans text-[13px] font-medium uppercase tracking-[0.3em] text-cyan-600 sm:text-[14px]">
+                Ilimitado
+              </p>
+            </div>
+
+            <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-neutral-600">
+              Em qualquer plano — inclusive o <strong className="text-neutral-900">Free</strong> — estamos liberando a{" "}
+              <strong className="text-neutral-900">IA (RZ Dinâmico)</strong> ilimitada. Gratuito para os primeiros{" "}
+              <strong className="text-cyan-600">500 novos alunos</strong>.
             </p>
           </div>
 
-          {/* Images showcase */}
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { src: "/motivos2/home-lavenga-1.png", alt: "IA Lavenga — Interface principal" },
-              { src: "/motivos2/home-lavenga-2.png", alt: "IA Lavenga — Entrada de urgência" },
-              { src: "/motivos2/home-lavenga-3.png", alt: "IA Lavenga — Dashboard completo" },
-            ].map((img, i) => (
-              <div
-                key={i}
-                className="group relative overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-[0_10px_40px_-15px_rgba(0,0,0,0.12)] transition-all duration-500 hover:shadow-[0_20px_60px_-15px_rgba(6,182,212,0.25)] hover:border-cyan-300/50"
-              >
-                {/* Subtle top accent line */}
-                <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  loading="lazy"
-                  className="block h-auto w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                />
+          {/* ── Images — large, stacked mobile / featured grid desktop ── */}
+          <div className="mt-14 flex flex-col gap-5 lg:grid lg:grid-cols-5 lg:grid-rows-2 lg:gap-5" style={{minHeight: 0}}>
+
+            {/* Image 1 — featured large, spans 3 cols + 2 rows on desktop */}
+            <div className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-900 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.18)] transition-all duration-500 hover:shadow-[0_30px_80px_-20px_rgba(6,182,212,0.22)] hover:border-cyan-300/60 lg:col-span-3 lg:row-span-2">
+              <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <img
+                src="/motivos2/home-lavenga-1.png"
+                alt="IA RZ Dinâmico — Interface principal"
+                loading="lazy"
+                className="block h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.025]"
+                style={{minHeight: '320px', maxHeight: '520px'}}
+              />
+              {/* Label */}
+              <div className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 backdrop-blur-md">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
+                <span className="font-mono text-[10px] uppercase tracking-widest text-white/80">Interface principal</span>
               </div>
-            ))}
+            </div>
+
+            {/* Image 2 — right top */}
+            <div className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-900 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.18)] transition-all duration-500 hover:shadow-[0_30px_80px_-20px_rgba(6,182,212,0.22)] hover:border-cyan-300/60 lg:col-span-2 lg:row-span-1">
+              <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <img
+                src="/motivos2/home-lavenga-2.png"
+                alt="IA RZ Dinâmico — Entrada de urgência"
+                loading="lazy"
+                className="block h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.025]"
+                style={{minHeight: '240px', maxHeight: '260px'}}
+              />
+              <div className="absolute bottom-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 backdrop-blur-md">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                <span className="font-mono text-[10px] uppercase tracking-widest text-white/80">Entrada de urgência</span>
+              </div>
+            </div>
+
+            {/* Image 3 — right bottom */}
+            <div className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-900 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.18)] transition-all duration-500 hover:shadow-[0_30px_80px_-20px_rgba(6,182,212,0.22)] hover:border-cyan-300/60 lg:col-span-2 lg:row-span-1">
+              <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <img
+                src="/motivos2/home-lavenga-3.png"
+                alt="IA RZ Dinâmico — Dashboard completo"
+                loading="lazy"
+                className="block h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.025]"
+                style={{minHeight: '240px', maxHeight: '260px'}}
+              />
+              <div className="absolute bottom-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-black/60 px-3 py-1.5 backdrop-blur-md">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span className="font-mono text-[10px] uppercase tracking-widest text-white/80">Dashboard completo</span>
+              </div>
+            </div>
           </div>
 
-          {/* Bottom badge */}
+          {/* ── Bottom badge ───────────────────────────── */}
           <div className="mt-10 flex justify-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-gradient-to-r from-cyan-50 to-blue-50 px-5 py-2.5 text-[12px] font-medium text-cyan-700 shadow-sm">
               <Zap className="h-3.5 w-3.5" />
@@ -465,6 +512,7 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
 
       {/* EDITORIAL split — Iron-Man styled HUD + 3 stats */}
       <section className="relative overflow-hidden border-t border-neutral-200/70 bg-white">
