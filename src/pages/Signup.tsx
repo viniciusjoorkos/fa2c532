@@ -157,13 +157,11 @@ export default function Signup() {
 
                     {/* Quick action button */}
                     <a
-                      href="https://mail.google.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`mailto:${email}`}
                       className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] text-[13px] text-white/70 transition hover:border-white/25 hover:bg-white/[0.08] hover:text-white"
                     >
                       <InboxIcon className="h-3.5 w-3.5" />
-                      Abrir Gmail
+                      Abrir meu e-mail
                     </a>
 
                     <p className="text-[11px] text-white/30">

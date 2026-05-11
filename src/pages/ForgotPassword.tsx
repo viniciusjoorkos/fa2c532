@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2, ArrowLeft, MailCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Mail, InboxIcon } from "lucide-react";
 import Logo from "@/components/Logo";
+import { toast } from "sonner";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -15,15 +13,14 @@ export default function ForgotPassword() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email) return;
-
+    if (!email.trim()) return;
     setLoading(true);
     try {
-      const res = await resetPassword(email);
+      const res = await resetPassword(email.trim());
       if (res.ok) {
         setSuccess(true);
       } else {
-        // Trata erro ou deixa o componente tratar se jogar exceção
+        toast.error(res.error ?? "Não foi possível enviar o link. Verifique o e-mail informado.");
       }
     } finally {
       setLoading(false);
@@ -31,80 +28,139 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-50 selection:bg-amber-200/70 dark:bg-[#080808]">
-      <header className="absolute inset-x-0 top-0 z-10 flex h-16 items-center px-6">
-        <Link to="/" className="flex items-center gap-2">
-          <Logo className="h-6 dark:invert-0" />
-        </Link>
+    <div className="relative min-h-screen overflow-hidden bg-black text-white antialiased">
+      {/* Ambient glow — top */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255,255,255,0.055) 0%, transparent 70%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 100% 50% at 50% 110%, rgba(0,0,0,0.7) 0%, transparent 60%)",
+        }}
+      />
+
+      {/* Top bar */}
+      <header className="relative z-10">
+        <div className="mx-auto flex h-14 max-w-5xl items-center justify-center px-5 sm:h-16">
+          <Link to="/" aria-label="RZ Trader Studio" className="opacity-80 transition hover:opacity-100">
+            <Logo className="h-6 sm:h-7" />
+          </Link>
+        </div>
       </header>
 
-      <main className="flex flex-1 items-center justify-center p-6">
-        <div className="w-full max-w-sm">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-900/50">
-            {success ? (
-              <div className="flex flex-col items-center text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
-                  <MailCheck className="h-6 w-6" />
-                </div>
-                <h1 className="mt-4 text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-                  Verifique seu e-mail
-                </h1>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
-                  Enviamos um link de recuperação para <strong>{email}</strong>. Clique nele para redefinir sua senha.
-                </p>
-                <Button asChild variant="outline" className="mt-6 w-full">
-                  <Link to="/login">Voltar ao login</Link>
-                </Button>
-              </div>
-            ) : (
-              <>
-                <div className="mb-8 text-center">
-                  <h1 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
-                    Recuperar senha
-                  </h1>
-                  <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
-                    Insira seu e-mail para receber um link de recuperação.
-                  </p>
-                </div>
+      <main className="relative z-10 flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-5 pb-16 pt-6">
+        <div className="w-full max-w-[380px]">
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-xs font-semibold uppercase text-neutral-500">
+          {success ? (
+            /* ── Success state ── */
+            <div className="text-center">
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/25 bg-emerald-500/10">
+                <Mail className="h-7 w-7 text-emerald-400" />
+              </div>
+              <h1 className="font-serif text-[26px] font-light leading-[1.1] tracking-tight text-white sm:text-3xl">
+                Verifique seu e-mail
+              </h1>
+              <p className="mt-3 text-[13px] leading-relaxed text-white/40">
+                Enviamos um link de recuperação para{" "}
+                <span className="font-medium text-white/70">{email}</span>.
+                <br />Clique no link para criar uma nova senha.
+              </p>
+              <p className="mt-2 text-[12px] text-white/25">
+                Não encontrou? Verifique a pasta de spam.
+              </p>
+
+              <div className="mt-7 flex flex-col gap-3">
+              <a
+                href={`mailto:${email}`}
+                className="flex h-11 items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] text-[13px] text-white/60 transition hover:border-white/15 hover:bg-white/[0.07] hover:text-white"
+              >
+                <InboxIcon className="h-3.5 w-3.5" />
+                Abrir meu e-mail
+              </a>
+                <Link
+                  to="/login"
+                  className="flex h-11 items-center justify-center gap-2 rounded-xl bg-white text-[13px] font-medium text-neutral-900 transition hover:bg-neutral-100"
+                >
+                  Voltar ao login
+                </Link>
+              </div>
+            </div>
+          ) : (
+            /* ── Form state ── */
+            <>
+              {/* Back link */}
+              <Link
+                to="/login"
+                className="mb-8 inline-flex items-center gap-1.5 text-[12px] text-white/35 transition hover:text-white/65"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Voltar ao login
+              </Link>
+
+              <p className="font-mono text-[9px] uppercase tracking-[0.5em] text-white/25">
+                Recuperação de senha
+              </p>
+              <h1 className="mt-4 font-serif text-[28px] font-light leading-[1.1] tracking-tight text-white sm:text-[34px]">
+                Esqueceu sua senha?
+              </h1>
+              <p className="mt-2 text-[12.5px] leading-relaxed text-white/35">
+                Digite seu e-mail e enviaremos um link para você criar uma nova senha.
+              </p>
+
+              <form
+                onSubmit={handleSubmit}
+                className="mt-8 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 shadow-[0_32px_80px_-24px_rgba(0,0,0,0.8)] backdrop-blur-2xl sm:p-7"
+              >
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <label
+                      htmlFor="fp-email"
+                      className="block pb-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-white/35"
+                    >
                       E-mail
-                    </Label>
-                    <Input
-                      id="email"
+                    </label>
+                    <input
+                      id="fp-email"
                       type="email"
-                      placeholder="seu@email.com"
+                      autoComplete="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="bg-neutral-50 dark:bg-neutral-900"
+                      placeholder="nome@email.com"
+                      className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3.5 py-3 text-[15px] text-white placeholder:text-white/20 outline-none transition-all focus:border-white/20 focus:bg-white/[0.07]"
                     />
                   </div>
 
-                  <Button
+                  <button
                     type="submit"
-                    disabled={loading || !email}
-                    className="w-full bg-amber-400 text-neutral-900 hover:bg-amber-500 dark:bg-primary dark:text-primary-foreground dark:hover:opacity-90"
+                    disabled={loading || !email.trim()}
+                    className="group flex h-12 items-center justify-center gap-2 rounded-xl bg-white text-[14px] font-medium text-neutral-900 shadow-[0_8px_32px_-8px_rgba(255,255,255,0.25)] transition hover:bg-neutral-50 active:scale-[0.98] disabled:opacity-55"
                   >
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    Enviar link
-                  </Button>
-                </form>
-
-                <div className="mt-6 text-center">
-                  <Link
-                    to="/login"
-                    className="inline-flex items-center text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-                  >
-                    <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
-                    Voltar ao login
-                  </Link>
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-neutral-500" />
+                    ) : (
+                      <>
+                        Enviar link de recuperação
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                      </>
+                    )}
+                  </button>
                 </div>
-              </>
-            )}
-          </div>
+              </form>
+
+              <p className="mt-6 text-center font-mono text-[9px] uppercase tracking-[0.35em] text-white/15">
+                RZ Trader Studio
+              </p>
+            </>
+          )}
         </div>
       </main>
     </div>
