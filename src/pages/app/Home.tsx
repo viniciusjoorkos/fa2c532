@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Calendar, Wallet, TrendingUp, TrendingDown, AlertTriangle, X, Trophy, Crown, Flame, Clock, Sparkles,
+  Calendar, Wallet, TrendingUp, TrendingDown, AlertTriangle, X,
+  Trophy, Crown, Flame, Clock, Sparkles, Users, BarChart2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { carteiraApi, convitesApi, expertApi, livesApi, sessoesApi } from "@/services/api";
 import { calcularNivel, formatBRL, formatDate, nivelColor, nivelProgress, canAccessLive } from "@/lib/calculations";
-import { StatCard } from "@/components/ui/stat-card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { BancaChart } from "@/components/home/BancaChart";
 import { PerformanceCard } from "@/components/home/PerformanceCard";
 import { RankingCard } from "@/components/home/RankingCard";
@@ -16,59 +15,52 @@ import { ChatWidget } from "@/components/ChatWidget";
 import type { Carteira, Convite, Live, Sessao } from "@/types";
 import { useLiveCountdown } from "@/hooks/useLiveCountdown";
 
-/** Badge de plano da live */
 function LivePlanBadge({ live }: { live: Live }) {
-  // Se tem plan_access definido, usa o primeiro; senão usa is_premium
   const plans = live.plan_access ?? [];
-  if (plans.includes("gold")) return <Badge className="w-fit text-[10px] border-amber-400/40 bg-amber-400/10 text-amber-400" variant="outline">GOLD</Badge>;
-  if (plans.includes("pro")) return <Badge className="w-fit text-[10px] border-foreground/40 bg-foreground/10 text-foreground" variant="outline">PRO</Badge>;
-  if (live.is_premium || plans.includes("premium")) return <Badge className="w-fit text-[10px] border-primary/40 bg-primary/10 text-primary" variant="outline"><Crown className="mr-1 h-3 w-3" />Premium</Badge>;
-  return <Badge className="w-fit text-[10px] border-emerald-500/40 bg-emerald-500/10 text-emerald-500" variant="outline">FREE</Badge>;
+  if (plans.includes("gold")) return <span className="rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-amber-400/10 text-amber-400 border border-amber-400/20">Gold</span>;
+  if (plans.includes("pro")) return <span className="rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-white/10 text-white/60 border border-white/10">PRO</span>;
+  if (live.is_premium || plans.includes("premium")) return <span className="rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">Premium</span>;
+  return <span className="rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Free</span>;
 }
 
-/** Card compacto de live para a lista */
 function LiveRow({ live, userPlan }: { live: Live; userPlan: string }) {
   const { countdown, canEnter, isLive, waitingLink } = useLiveCountdown(live.data, live.status, live.link);
   const hasLink = !!live.link && live.link.trim() !== "";
   const hasAccess = canAccessLive(userPlan, live.plan_access);
 
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-border last:border-b-0">
+    <div className="flex items-center gap-2 py-2.5 border-b border-border/50 last:border-b-0">
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold leading-tight truncate">{live.titulo}</p>
-        <div className="mt-1 flex items-center gap-2">
-          <span className="text-[11px] text-muted-foreground">{formatDate(live.data)}</span>
+        <p className="text-xs font-medium leading-tight truncate text-foreground/90">{live.titulo}</p>
+        <div className="mt-0.5 flex items-center gap-1.5">
+          <span className="text-[10px] text-muted-foreground">{formatDate(live.data)}</span>
           <LivePlanBadge live={live} />
         </div>
       </div>
       <div className="shrink-0">
         {!hasAccess ? (
           <Link to="/signup?plan=premium">
-            <Button size="sm" variant="outline" className="text-[11px] border-primary/30 text-primary">Requer Upgrade</Button>
+            <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-medium text-primary">Upgrade</span>
           </Link>
         ) : isLive && hasLink ? (
           <a href={live.link} target="_blank" rel="noreferrer">
-            <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 animate-pulse-glow">
-              <span className="dot-online mr-1.5" /> Ao Vivo
-            </Button>
+            <span className="flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-semibold text-white animate-pulse">
+              <span className="h-1.5 w-1.5 rounded-full bg-white" /> Ao Vivo
+            </span>
           </a>
         ) : canEnter && hasLink ? (
           <a href={live.link} target="_blank" rel="noreferrer">
-            <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90">
-              Entrar
-            </Button>
+            <span className="rounded-full bg-primary px-2.5 py-1 text-[10px] font-medium text-white">Entrar</span>
           </a>
-        ) : waitingLink ? (
-          <Button size="sm" variant="outline" disabled className="text-[11px]">
-            Link em breve
-          </Button>
         ) : countdown ? (
-          <div className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5">
-            <Clock className="h-3 w-3 text-muted-foreground" />
-            <span className="font-mono text-xs font-bold tracking-wider">{countdown}</span>
-          </div>
+          <span className="flex items-center gap-1 rounded-lg border border-border bg-card px-2 py-1">
+            <Clock className="h-2.5 w-2.5 text-muted-foreground" />
+            <span className="font-mono text-[10px] font-bold">{countdown}</span>
+          </span>
         ) : (
-          <Button size="sm" variant="outline" disabled className="text-[11px]">Finalizada</Button>
+          <span className="rounded-full border border-border px-2.5 py-1 text-[10px] text-muted-foreground">
+            {waitingLink ? "Em breve" : "Encerrada"}
+          </span>
         )}
       </div>
     </div>
@@ -109,132 +101,128 @@ export default function Home() {
   const nivel = calcularNivel(sessoes.length, totalLucro);
   const progresso = nivelProgress(sessoes.length, totalLucro);
 
-  // Calculate streak for display
   let loginStreak = 0;
   if (sessoes.length > 0) {
-    const sorted = [...sessoes].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+    const sorted = [...sessoes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     const dates = new Set(sorted.map((s) => new Date(s.created_at).toDateString()));
     loginStreak = dates.size;
   }
 
   return (
-    <div className="flex flex-col gap-4 sm:gap-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs text-muted-foreground sm:text-sm">Bem-vindo de volta,</p>
-          <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
-            {user?.name} <span className="text-muted-foreground">👋</span>
-            {user?.is_gold && (
-              <span className="text-amber-400 text-lg" title="Gold Member">✦</span>
-            )}
+    <div className="flex flex-col gap-3 sm:gap-5">
+
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between">
+        <div className="min-w-0">
+          <p className="text-[10px] text-muted-foreground">Bem-vindo de volta</p>
+          <h2 className="flex items-center gap-1.5 text-base font-bold tracking-tight sm:text-lg truncate">
+            {user?.name}
+            {user?.is_gold && <span className="text-amber-400 text-sm" title="Gold">✦</span>}
           </h2>
         </div>
-        {loginStreak > 2 && (
-          <div className="flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1">
-            <Flame className="h-3.5 w-3.5 text-amber-400" />
-            <span className="text-xs font-bold text-amber-400">{loginStreak}d</span>
-          </div>
-        )}
-        {/* IA shortcut button */}
-        <Link
-          to="/app/ia"
-          className="flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-400 transition-all hover:bg-cyan-500/20 hover:border-cyan-500/50"
-        >
-          <Sparkles className="h-3.5 w-3.5" />
-          RZ IA
-        </Link>
+        <div className="flex items-center gap-2 shrink-0">
+          {loginStreak > 2 && (
+            <span className="flex items-center gap-1 rounded-full border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-[10px] font-semibold text-orange-400">
+              <Flame className="h-3 w-3" />{loginStreak}d
+            </span>
+          )}
+          <Link
+            to="/app/ia"
+            className="flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-[10px] font-semibold text-primary transition hover:bg-primary/20"
+          >
+            <Sparkles className="h-3 w-3" />RZ IA
+          </Link>
+        </div>
       </div>
 
-      {/* Alert: 3 consecutive losses */}
+      {/* ── Alert: 3 consecutive losses ── */}
       {tresPerdas && !dismissAlert && (
-        <div className="flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/10 p-3 sm:p-4">
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
-          <div className="flex-1">
-            <p className="text-xs font-semibold text-destructive sm:text-sm">Atenção: 3 sessões negativas seguidas</p>
-            <p className="mt-0.5 text-[11px] text-destructive/80">
-              Recomendamos uma pausa para revisar seu plano antes de operar novamente.
-            </p>
+        <div className="flex items-start gap-2.5 rounded-xl border border-destructive/25 bg-destructive/8 px-3 py-2.5">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-semibold text-destructive">3 sessões negativas seguidas</p>
+            <p className="mt-0.5 text-[10px] text-destructive/70">Recomendamos uma pausa para revisar seu plano.</p>
           </div>
-          <Button size="icon" variant="ghost" onClick={() => setDismissAlert(true)} className="h-7 w-7">
-            <X className="h-4 w-4" />
-          </Button>
+          <button onClick={() => setDismissAlert(true)} className="text-muted-foreground hover:text-foreground">
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
       )}
 
-      {/* Premium upsell */}
+      {/* ── Premium upsell ── */}
       {!isPremium && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 to-transparent p-3 sm:p-4">
-          <div className="flex items-center gap-3">
-            <Crown className="h-5 w-5 text-primary" />
-            <div>
-              <p className="text-xs font-semibold sm:text-sm">Desbloqueie as Lives Premium</p>
-              <p className="text-[11px] text-muted-foreground">Acesso às salas exclusivas com o expert ao vivo.</p>
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/6 px-3 py-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <Crown className="h-4 w-4 shrink-0 text-primary" />
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold text-foreground/90 leading-tight">Lives Premium desbloqueadas</p>
+              <p className="text-[10px] text-muted-foreground">Acesso total com o expert ao vivo</p>
             </div>
           </div>
-          <Link to="/signup?plan=premium">
-            <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90">
-              Fazer upgrade
-            </Button>
+          <Link
+            to="/signup?plan=premium"
+            className="shrink-0 rounded-full bg-primary px-3 py-1.5 text-[10px] font-semibold text-white transition hover:opacity-90"
+          >
+            Upgrade
           </Link>
         </div>
       )}
 
-      {/* Stat Cards — 2 cols mobile, 4 cols desktop */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-3">
-        <StatCard
-          label="Saldo atual"
-          value={formatBRL(carteira?.saldo_atual ?? 0)}
-          accent="primary"
-          icon={<Wallet className="h-4 w-4" />}
-          trend={ultimoResultado !== 0 ? {
-            value: `${ultimoResultado >= 0 ? "+" : ""}${formatBRL(ultimoResultado)} (último)`,
-            positive: ultimoResultado >= 0,
-          } : undefined}
-        />
-        <StatCard
-          label="Status expert"
-          value={
-            <span className="flex items-center gap-2 text-sm sm:text-base">
-              <span className={expertOnline ? "dot-online" : "dot-offline"} />
-              {expertOnline ? "Online" : "Offline"}
-            </span>
-          }
-          icon={expertOnline ? <TrendingUp className="h-4 w-4 text-primary" /> : <TrendingDown className="h-4 w-4" />}
-        />
-        <StatCard
-          label="Seu nível"
-          value={
-            <div className="flex flex-col gap-1.5 w-full">
-              <span className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-primary sm:h-5 sm:w-5" /> {nivel}
-              </span>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary/50">
-                <div className="h-full bg-primary transition-all duration-500" style={{ width: `${progresso}%` }} />
-              </div>
-            </div>
-          }
-          icon={<Badge className={nivelColor(nivel)} variant="outline">{nivel}</Badge>}
-        />
+      {/* ── Stat Cards — 3 compact cols ── */}
+      <div className="grid grid-cols-3 gap-2">
+        {/* Saldo */}
+        <div className="glass-card rounded-xl p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">Saldo</span>
+            <Wallet className="h-3.5 w-3.5 text-muted-foreground" />
+          </div>
+          <p className="text-sm font-bold text-foreground sm:text-base">{formatBRL(carteira?.saldo_atual ?? 0)}</p>
+          {ultimoResultado !== 0 && (
+            <p className={`mt-0.5 text-[9px] font-medium ${ultimoResultado >= 0 ? "text-emerald-400" : "text-destructive"}`}>
+              {ultimoResultado >= 0 ? "+" : ""}{formatBRL(ultimoResultado)} último
+            </p>
+          )}
+        </div>
+
+        {/* Expert */}
+        <div className="glass-card rounded-xl p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">Expert</span>
+            {expertOnline ? <TrendingUp className="h-3.5 w-3.5 text-primary" /> : <TrendingDown className="h-3.5 w-3.5 text-muted-foreground" />}
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className={`h-2 w-2 rounded-full ${expertOnline ? "bg-emerald-400 shadow-[0_0_0_3px_rgba(52,211,153,0.2)]" : "bg-muted-foreground"}`} />
+            <p className="text-sm font-bold">{expertOnline ? "Online" : "Offline"}</p>
+          </div>
+        </div>
+
+        {/* Nível */}
+        <div className="glass-card rounded-xl p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">Nível</span>
+            <Trophy className="h-3.5 w-3.5 text-muted-foreground" />
+          </div>
+          <p className="text-sm font-bold text-foreground">{nivel}</p>
+          <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-muted">
+            <div className="h-full bg-primary transition-all duration-500 rounded-full" style={{ width: `${progresso}%` }} />
+          </div>
+        </div>
       </div>
 
-      {/* Performance metrics */}
+      {/* ── Performance ── */}
       <PerformanceCard sessoes={sessoes} />
 
-      {/* Chart + Next Live */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      {/* ── Chart + Lives ── */}
+      <div className="grid gap-3 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <BancaChart sessoes={sessoes} bancaInicial={carteira?.banca_inicial ?? 0} />
         </div>
 
-        <div className="glass-card flex flex-col gap-2 rounded-xl p-4 sm:p-5">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Próximas Lives</h3>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+        <div className="glass-card rounded-xl p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Próximas Lives</span>
+            <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
           </div>
-
           {proximasLives.length > 0 ? (
             <div className="flex flex-col">
               {proximasLives.map((live) => (
@@ -242,68 +230,48 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-1 items-center justify-center text-center text-sm text-muted-foreground py-6">
+            <div className="flex items-center justify-center py-6 text-[11px] text-muted-foreground">
               Nenhuma live agendada
             </div>
           )}
-
-          <Link to="/app/agenda" className="text-center text-xs font-medium text-primary hover:underline mt-1">
+          <Link to="/app/agenda" className="mt-2 block text-center text-[10px] font-medium text-primary hover:underline">
             Ver agenda completa →
           </Link>
         </div>
       </div>
 
-      {/* Ranking + Recent Sessions */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      {/* ── Ranking + Sessions ── */}
+      <div className="grid gap-3 lg:grid-cols-2">
         <RankingCard />
 
-        <div className="glass-card rounded-xl p-4 sm:p-5">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Últimas sessões</h3>
-            <Link to="/app/carteira" className="text-xs font-medium text-primary hover:underline">Ver tudo →</Link>
+        <div className="glass-card rounded-xl p-3 sm:p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Últimas Sessões</span>
+            <Link to="/app/carteira" className="text-[10px] font-medium text-primary hover:underline">Ver tudo →</Link>
           </div>
-          <div className="mt-3 flex flex-col divide-y divide-border">
+          <div className="flex flex-col divide-y divide-border/50">
             {sessoes.slice(0, 4).map((s) => (
-              <div key={s.id} className="flex items-center justify-between py-2.5 sm:py-3">
+              <div key={s.id} className="flex items-center justify-between py-2">
                 <div>
-                  <p className="text-xs font-medium sm:text-sm">{s.entradas} entradas · {s.duracao}min</p>
-                  <p className="text-[11px] text-muted-foreground">{formatDate(s.created_at)}</p>
+                  <p className="text-[11px] font-medium text-foreground/90">{s.entradas} entradas · {s.duracao}min</p>
+                  <p className="text-[10px] text-muted-foreground">{formatDate(s.created_at)}</p>
                 </div>
-                <span className={`text-xs font-bold sm:text-sm ${s.resultado >= 0 ? "text-primary" : "text-destructive"}`}>
+                <span className={`text-xs font-bold ${s.resultado >= 0 ? "text-emerald-400" : "text-destructive"}`}>
                   {s.resultado >= 0 ? "+" : ""}{formatBRL(s.resultado)}
                 </span>
               </div>
             ))}
             {sessoes.length === 0 && (
-              <p className="py-6 text-center text-xs text-muted-foreground">Nenhuma sessão ainda. Vá para a Carteira para começar.</p>
+              <p className="py-5 text-center text-[10px] text-muted-foreground">
+                Nenhuma sessão. Vá para a Carteira para começar.
+              </p>
             )}
           </div>
         </div>
       </div>
 
-      {/* Chat Section */}
-      <div className="mt-4 sm:mt-6">
-        <ChatWidget />
-      </div>
-
-      {/* Social / Support Buttons */}
-      <div className="mt-4 flex flex-col gap-3 sm:mt-6 sm:flex-row">
-        {user?.plan === "free" ? (
-          <Button disabled className="flex-1 bg-muted text-muted-foreground">
-            Assine um plano para liberar suporte
-          </Button>
-        ) : (
-          <Button asChild className="flex-1 bg-primary text-primary-foreground hover:opacity-90">
-            <a href="#" target="_blank" rel="noopener noreferrer">Falar com Rezende</a>
-          </Button>
-        )}
-        <Button asChild variant="outline" className="flex-1 border-primary/40 text-primary hover:bg-primary/10">
-          <a href="#" target="_blank" rel="noopener noreferrer">Entrar no grupo</a>
-        </Button>
-        <Button asChild variant="outline" className="flex-1 border-pink-500/40 text-pink-500 hover:bg-pink-500/10">
-          <a href="#" target="_blank" rel="noopener noreferrer">Instagram Rezende</a>
-        </Button>
-      </div>
+      {/* ── Chat ── */}
+      <ChatWidget />
     </div>
   );
 }
