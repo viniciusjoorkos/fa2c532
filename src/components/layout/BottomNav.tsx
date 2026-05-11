@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Wallet, Radio, MessageSquare, User } from "lucide-react";
+import { Home, Wallet, Radio, MessageSquare, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { livesApi } from "@/services/api";
@@ -10,7 +10,7 @@ const tabs = [
   { to: "/app/carteira", icon: Wallet, label: "Carteira" },
   { to: "/app/agenda", icon: Radio, label: "Lives" },
   { to: "/app/chat", icon: MessageSquare, label: "Chat" },
-  { to: "/app/perfil", icon: User, label: "Perfil" },
+  { to: "/app/ia", icon: Sparkles, label: "IA", accent: true },
 ];
 
 export default function BottomNav() {
@@ -35,6 +35,7 @@ export default function BottomNav() {
 
           const isLives = tab.to === "/app/agenda";
           const isHome = tab.to === "/app" && tab.end;
+          const isIa = (tab as any).accent;
 
           return (
             <NavLink
@@ -47,7 +48,13 @@ export default function BottomNav() {
                 <tab.icon
                   className={cn(
                     "h-5 w-5 transition-colors",
-                    isActive ? "text-primary" : "text-muted-foreground"
+                    isIa && isActive
+                      ? "text-cyan-400"
+                      : isActive
+                      ? "text-primary"
+                      : isIa
+                      ? "text-cyan-500/60"
+                      : "text-muted-foreground"
                   )}
                   strokeWidth={isActive ? 2.2 : 1.8}
                 />
@@ -65,14 +72,20 @@ export default function BottomNav() {
               <span
                 className={cn(
                   "text-[10px] font-medium transition-colors",
-                  isActive ? "text-primary" : "text-muted-foreground"
+                  isIa && isActive
+                    ? "text-cyan-400"
+                    : isActive
+                    ? "text-primary"
+                    : isIa
+                    ? "text-cyan-500/60"
+                    : "text-muted-foreground"
                 )}
               >
                 {tab.label}
               </span>
               {/* Active indicator line */}
               {isActive && (
-                <span className="absolute -top-px left-1/2 h-[2px] w-8 -translate-x-1/2 rounded-full bg-primary" />
+                <span className={cn("absolute -top-px left-1/2 h-[2px] w-8 -translate-x-1/2 rounded-full", isIa ? "bg-cyan-400" : "bg-primary")} />
               )}
             </NavLink>
           );

@@ -80,12 +80,32 @@ function LiveCountdownCard({ live, userPlan }: { live: Live; userPlan: string })
   );
 }
 
+/** Returns current time in Brasília (UTC-3) as a JS Date */
+function nowBrasilia(): Date {
+  const now = new Date();
+  // Brasília is UTC-3; adjust from local UTC
+  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+  return new Date(utcMs - 3 * 60 * 60 * 1000);
+}
+
 export default function Agenda() {
-  const { user } = useAuth();
+  const { user, isPremium } = useAuth();
   const [lives, setLives] = useState<Live[]>([]);
 
   useEffect(() => {
-    livesApi.upcoming().then(setLives);
+    livesApi.upcoming().then((data) => {
+      const brasiliaNow = nowBrasilia();
+      // Filter: keep ao_vivo OR scheduled date >= now in Brasília (minus 2h grace period for ongoing)
+      const filtered = data.filter((l) => {
+        if (l.status === "ao_vivo") return true;
+        const liveDate = new Date(l.data);
+        // Show if the live date is in the future or started less than 2 hours ago
+        return liveDate.getTime() >= brasiliaNow.getTime() - 2 * 60 * 60 * 1000;
+      });
+      // Sort: most imminent first
+      filtered.sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+      setLives(filtered);
+    });
   }, []);
 
   return (

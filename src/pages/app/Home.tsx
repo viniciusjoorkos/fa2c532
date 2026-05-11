@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Calendar, Wallet, TrendingUp, TrendingDown, AlertTriangle, X, Trophy, Crown, Flame, Clock,
+  Calendar, Wallet, TrendingUp, TrendingDown, AlertTriangle, X, Trophy, Crown, Flame, Clock, Sparkles,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { carteiraApi, convitesApi, expertApi, livesApi, sessoesApi } from "@/services/api";
@@ -138,6 +138,14 @@ export default function Home() {
             <span className="text-xs font-bold text-amber-400">{loginStreak}d</span>
           </div>
         )}
+        {/* IA shortcut button */}
+        <Link
+          to="/app/ia"
+          className="flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-400 transition-all hover:bg-cyan-500/20 hover:border-cyan-500/50"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          RZ IA
+        </Link>
       </div>
 
       {/* Alert: 3 consecutive losses */}

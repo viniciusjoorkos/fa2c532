@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, Calendar, Video, Wallet, Gift, ExternalLink, User as UserIcon,
-  Shield, LogOut, Menu, MessageSquare, Crown, BookOpen,
+  Shield, LogOut, Menu, MessageSquare, Crown, BookOpen, Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -106,6 +106,22 @@ export default function DashboardLayout() {
             <ExternalLink className="h-4 w-4" />
             Área de Membros
           </a>
+
+          <NavLink
+            to="/app/ia"
+            onClick={() => setOpen(false)}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                isActive
+                  ? "bg-cyan-500/10 text-cyan-400"
+                  : "text-cyan-500/70 hover:bg-cyan-500/10 hover:text-cyan-400"
+              )
+            }
+          >
+            <Sparkles className="h-4 w-4" />
+            RZ IA
+          </NavLink>
 
           <NavLink
             to="/app/perfil"
@@ -267,5 +283,6 @@ function currentTitle(path: string): string {
   if (path.startsWith("/app/premium")) return "Lives Premium";
   if (path.startsWith("/app/instrucoes")) return "Instruções";
   if (path.startsWith("/app/admin")) return "Painel Administrativo";
+  if (path.startsWith("/app/ia")) return "RZ IA";
   return "RZ TRADER STUDIO";
 }

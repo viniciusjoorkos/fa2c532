@@ -25,6 +25,7 @@ import Premium from "./pages/app/Premium";
 import Instrucoes from "./pages/app/Instrucoes";
 import PublicProfile from "./pages/app/PublicProfile";
 import Inbox from "./pages/app/Inbox";
+import RzIa from "./pages/app/RzIa";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 
@@ -65,6 +66,7 @@ const App = () => (
               <Route path="perfil" element={<Perfil />} />
               <Route path="usuario/:id" element={<PublicProfile />} />
               <Route path="inbox" element={<Inbox />} />
+              <Route path="ia" element={<RzIa />} />
               <Route
                 path="admin"
                 element={

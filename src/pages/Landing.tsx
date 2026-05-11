@@ -310,7 +310,7 @@ export default function Landing() {
         </header>
 
         {/* Hero copy — REZENDE MEET */}
-        <div className="relative z-[10] mx-auto flex min-h-[calc(100vh-64px)] max-w-5xl flex-col items-center justify-center px-6 pb-32 pt-10 text-center">
+        <div className="relative z-[10] mx-auto flex min-h-[calc(100vh-64px)] max-w-5xl flex-col items-center justify-center px-3 sm:px-6 pb-32 pt-10 text-center">
           <h1 className="font-serif text-[48px] font-bold leading-[1] tracking-tight text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.6)] sm:text-[72px] lg:text-[96px]">
             REZENDE
             <br />
@@ -324,7 +324,7 @@ export default function Landing() {
           </p>
 
           {/* VTurb Hero Video */}
-          <div className="mt-8 sm:mt-12 w-full max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+          <div className="mt-6 sm:mt-12 w-full sm:max-w-4xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] -mx-3 sm:mx-auto" style={{width: 'calc(100% + 1.5rem)'}}>
             <VturbVideo
               scriptSrc="https://scripts.converteai.net/512f6166-0536-4361-9189-645ba6587dff/players/69fadd77ce8c536e45bf5317/v4/player.js"
               html={`<vturb-smartplayer id="vid-69fadd77ce8c536e45bf5317" style="display: block; margin: 0 auto; width: 100%;"></vturb-smartplayer>`}
